@@ -11,6 +11,9 @@ public class Sentence {
     private double deltaX;
     private double deltaY;
     private double magnitude;
+    private double percentilePos; //percentile position of the sentence in the document, calculated by
+    //position number of the sentence in the document / total num of sentences in the document
+    //page 10 of KEA: Practical Automatic Keyphrase Extraction
 
     public Sentence(String text) {
         this.text = text;
@@ -35,6 +38,10 @@ public class Sentence {
 
     public ArrayList<String> getWords() {
         return words;
+    }
+
+    public double getPercentilePos() {
+        return percentilePos;
     }
 
     public void setDeltaX(double x) {
@@ -95,5 +102,9 @@ public class Sentence {
                 words.add(singleWord);
             }
         }
+    }
+
+    public void calculatePercPos(double sentenceIndex, double totalSentences) {
+        percentilePos = sentenceIndex / totalSentences;
     }
 }

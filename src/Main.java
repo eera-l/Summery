@@ -13,5 +13,11 @@ public class Main {
             System.out.println("Words: " + s.countWordsInSentence());
             System.out.println("--------------");
         }
+
+        summarizer.calcSentencePercPos();
+
+        for (Sentence s :summarizer.getSentences()) {
+            System.out.println("Percentile position: " + s.getPercentilePos());
+        }
     }
 }

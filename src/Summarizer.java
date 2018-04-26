@@ -35,4 +35,13 @@ public class Summarizer {
             i += 2; //Skip space after period
         }
     }
+
+    public void calcSentencePercPos() {
+
+        double size = sentences.size();
+        for (int i = 0; i < sentences.size(); i++) {
+            double index = i + 1;
+            sentences.get(i).calculatePercPos(index, size);
+        }
+    }
 }
