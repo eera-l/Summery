@@ -11,6 +11,7 @@ public class Main {
         for (Sentence s : summarizer.getSentences()) {
             System.out.println(s.getText());
             System.out.println("Words: " + s.countWordsInSentence());
+            System.out.println("--------------");
         }
     }
 }
