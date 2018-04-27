@@ -11,17 +11,24 @@ public class Algo implements Runnable {
         Summarizer summarizer = new Summarizer(text);
 
         summarizer.divideTextInSentences();
+        text = "";
 
         for (Sentence s : summarizer.getSentences()) {
-            System.out.println(s.getText());
-            System.out.println("Words: " + s.countWordsInSentence());
-            System.out.println("--------------");
+            text+=s.getText()+"\n";
+            text+= "Words: " + s.countWordsInSentence()+"\n";
+            text+="--------------\n";
+
+
+//            System.out.println(s.getText());
+//            System.out.println("Words: " + s.countWordsInSentence());
+//            System.out.println("--------------");
         }
 
         summarizer.calcSentencePercPos();
 
         for (Sentence s :summarizer.getSentences()) {
-            System.out.println("Percentile position: " + s.getPercentilePos());
+            text+="Percentile position: " + s.getPercentilePos()+"\n";
+            //System.out.println("Percentile position: " + s.getPercentilePos());
         }
     }
 

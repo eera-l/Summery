@@ -45,8 +45,12 @@ public class Main {
             Algo algo = new Algo(text);
             Thread thread = new Thread(algo);
             thread.start();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             response = algo.getText();
-
             // send the response
             t.sendResponseHeaders(200, response.getBytes().length);
             OutputStream os = t.getResponseBody();

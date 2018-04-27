@@ -11,7 +11,8 @@ public class Sentence {
     private double deltaX;
     private double deltaY;
     private double magnitude;
-    private double percentilePos; //percentile position of the sentence in the document, calculated by
+    private double percentilePos;
+    //percentile position of the sentence in the document, calculated by
     //position number of the sentence in the document / total num of sentences in the document
     //page 10 of KEA: Practical Automatic Keyphrase Extraction
 
