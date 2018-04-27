@@ -7,13 +7,16 @@ public class Sentence {
 
     private String text;
     private int wordsInText;
-    private ArrayList<String> words;
+    private ArrayList<Word> words;
     private double deltaX;
     private double deltaY;
     private double magnitude;
     private double percentilePos; //percentile position of the sentence in the document, calculated by
     //position number of the sentence in the document / total num of sentences in the document
     //page 10 of KEA: Practical Automatic Keyphrase Extraction
+    private double meanWordFrequency; //average based on how frequent the words
+    //within the sentence are compared to the words in all other sentences
+
 
     public Sentence(String text) {
         this.text = text;
@@ -36,7 +39,7 @@ public class Sentence {
         return wordsInText;
     }
 
-    public ArrayList<String> getWords() {
+    public ArrayList<Word> getWords() {
         return words;
     }
 
@@ -94,17 +97,24 @@ public class Sentence {
             if (word.charAt(i) != ' ') {
                 singleWord += word.charAt(i);
             } else {
-                words.add(singleWord);
+                words.add(new Word(singleWord));
                 singleWord = "";
             }
 
             if (i == word.length() - 1) {
-                words.add(singleWord);
+                words.add(new Word(singleWord));
             }
         }
     }
 
     public void calculatePercPos(double sentenceIndex, double totalSentences) {
         percentilePos = sentenceIndex / totalSentences;
+    }
+
+
+    public void calculateMeanFrequency() {
+
+        int sum = 0;
+
     }
 }

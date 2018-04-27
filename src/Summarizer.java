@@ -44,4 +44,15 @@ public class Summarizer {
             sentences.get(i).calculatePercPos(index, size);
         }
     }
+
+    public void calculateWordFrequency() {
+
+        for (Sentence s : sentences) {
+            for (Word w : s.getWords()) {
+                if (w.getWord().length() >= 5) {
+                    w.setFrequency(w.getFrequency() + 1);
+                }
+            }
+        }
+    }
 }
