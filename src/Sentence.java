@@ -7,7 +7,7 @@ public class Sentence {
 
     private String text;
     private int wordsInText;
-    private ArrayList<Word> words;
+    private ArrayList<String> words;
     private double deltaX;
     private double deltaY;
     private double magnitude;
@@ -40,13 +40,15 @@ public class Sentence {
         return wordsInText;
     }
 
-    public ArrayList<Word> getWords() {
+    public ArrayList<String> getWords() {
         return words;
     }
 
     public double getPercentilePos() {
         return percentilePos;
     }
+
+    public double getMeanWordFrequency() { return meanWordFrequency; }
 
     public void setDeltaX(double x) {
         deltaX = x;
@@ -98,12 +100,12 @@ public class Sentence {
             if (word.charAt(i) != ' ') {
                 singleWord += word.charAt(i);
             } else {
-                words.add(new Word(singleWord));
+                words.add(singleWord.toLowerCase());
                 singleWord = "";
             }
 
             if (i == word.length() - 1) {
-                words.add(new Word(singleWord));
+                words.add(singleWord.toLowerCase());
             }
         }
     }
@@ -115,7 +117,15 @@ public class Sentence {
 
     public void calculateMeanFrequency() {
 
-        int sum = 0;
+        double total = 0;
+        double totalFrequency = 0;
+        for (int i = 0; i < words.size(); i++) {
+            if (words.get(i).length() >= 4) {
+                totalFrequency += Summarizer.frequencyMap.get(words.get(i));
+                total++;
+            }
+        }
 
+        meanWordFrequency = totalFrequency / total;
     }
 }

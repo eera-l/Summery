@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Federica on 26/04/2018.
@@ -7,6 +8,7 @@ public class Summarizer {
 
     private String beginningText;
     private ArrayList<Sentence> sentences = new ArrayList<>();
+    public static HashMap<String, Integer> frequencyMap = new HashMap<>();
 
     public Summarizer(String text) {
         beginningText = text;
@@ -48,9 +50,13 @@ public class Summarizer {
     public void calculateWordFrequency() {
 
         for (Sentence s : sentences) {
-            for (Word w : s.getWords()) {
-                if (w.getWord().length() >= 5) {
-                    w.setFrequency(w.getFrequency() + 1);
+            for (String w : s.getWords()) {
+                if (w.length() >= 4) {
+                    if (!frequencyMap.containsKey(w)) {
+                        frequencyMap.put(w, 1);
+                    } else {
+                        frequencyMap.replace(w, frequencyMap.get(w) + 1);
+                    }
                 }
             }
         }
