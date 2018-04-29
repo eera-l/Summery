@@ -15,8 +15,12 @@ public class Sentence {
     //percentile position of the sentence in the document, calculated by
     //position number of the sentence in the document / total num of sentences in the document
     //page 10 of KEA: Practical Automatic Keyphrase Extraction
+
     private double meanWordFrequency; //average based on how frequent the words
     //within the sentence are compared to the words in all other sentences
+
+    private double similarityToTitle; //average of how many words in the sentence
+    //match the words in the title
 
 
     public Sentence(String text) {
@@ -50,12 +54,20 @@ public class Sentence {
 
     public double getMeanWordFrequency() { return meanWordFrequency; }
 
+    public double getSimilarityToTitle() {
+        return similarityToTitle;
+    }
+
     public void setDeltaX(double x) {
         deltaX = x;
     }
 
     public void setDeltaY(double y) {
         deltaY = y;
+    }
+
+    public void setSimilarityToTitle(double similarityToTitle) {
+        this.similarityToTitle = similarityToTitle;
     }
 
     public double getMagnitude() {
@@ -66,6 +78,11 @@ public class Sentence {
         return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
     }
 
+    /**
+     * Counts words in a sentence. Words are separated
+     * by a space or an apostrophe.
+     * @return number of words in a sentence
+     */
     public int countWordsInSentence() {
 
         int numOfWords = 0;
@@ -78,6 +95,11 @@ public class Sentence {
         return numOfWords;
     }
 
+    /**
+     * Eliminates any punctuation except for spaces from sentence.
+     * Replaces apostrophes with spaces.
+     * @return String without any punctuation except for spaces
+     */
     public String eliminatePunctuation() {
         String word = "";
         for (int i = 0; i < text.length(); i++) {
@@ -91,6 +113,10 @@ public class Sentence {
        return word;
     }
 
+    /**
+     * Extracts words from sentences and
+     * adds them to array in lower case.
+     */
     public void extractWords() {
 
         String word = eliminatePunctuation();
@@ -115,6 +141,9 @@ public class Sentence {
     }
 
 
+    /**
+     * Calculates average frequency for sentence.
+     */
     public void calculateMeanFrequency() {
 
         double total = 0;

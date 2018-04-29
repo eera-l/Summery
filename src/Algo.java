@@ -93,12 +93,15 @@ public class Algo implements Runnable {
 
         summarizer.calcSentencePercPos();
         summarizer.calculateWordFrequency();
+        summarizer.calculateSimilarityToTitle();
 
         for (Sentence s :summarizer.getSentences()) {
             text += "Percentile position: " + s.getPercentilePos();
 
             s.calculateMeanFrequency();
             text += " Average frequency: " + s.getMeanWordFrequency() + "\n";
+
+            text += "Similarity to title: " + s.getSimilarityToTitle() + "\n";
         }
     }
 
