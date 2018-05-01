@@ -17,11 +17,11 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-            HttpServer server = HttpServer.create(new InetSocketAddress(	6789), 0);
+            HttpServer server = HttpServer.create(new InetSocketAddress(6789), 0);
             server.createContext("/test", new MyHandler());
             server.setExecutor(Executors.newFixedThreadPool(50)); // creates a default executor
             server.start();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

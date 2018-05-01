@@ -22,6 +22,9 @@ public class Sentence {
     private double similarityToTitle; //average of how many words in the sentence
     //match the words in the title
 
+    private double similarityToKeywords; //average of how many wprds in the sentence
+    //match the text's keywords as calculated in the Summarizer class
+
 
     public Sentence(String text) {
         this.text = text;
@@ -57,6 +60,8 @@ public class Sentence {
     public double getSimilarityToTitle() {
         return similarityToTitle;
     }
+
+    public double getSimilarityToKeywords() { return similarityToKeywords; }
 
     public void setDeltaX(double x) {
         deltaX = x;
@@ -149,12 +154,36 @@ public class Sentence {
         double total = 0;
         double totalFrequency = 0;
         for (int i = 0; i < words.size(); i++) {
-            if (words.get(i).length() >= 4) {
+            String w = words.get(i);
+            if (w.length() >= 4 && !w.equals("that") && !w.equals("with") && !w.equals("over")
+                    && !w.equals("they") && !w.equals("does") && !w.equals("when")
+                    && !w.equals("goes") && !w.equals("where") && !w.equals("which")
+                    && !w.equals("without") && !w.equals("some") && !w.equals("said")
+                    && !w.equals("then") && !w.equals("from") && !w.equals("this") && !w.equals("went")) {
                 totalFrequency += Summarizer.frequencyMap.get(words.get(i));
                 total++;
             }
         }
 
         meanWordFrequency = totalFrequency / total;
+    }
+
+    /**
+     * Calculates how many words in the sentence
+     * match text's keywords from Summarizer and divides it
+     * by number of words in the sentence.
+     */
+    public void calculateSimilarityToKeywords() {
+
+        double numOfSimilar = 0;
+        for (int i = 0; i < words.size(); i++) {
+            for (int j = 0; j < Summarizer.keywords.length; j++) {
+                if (words.get(i).equals(Summarizer.keywords[j])) {
+                    numOfSimilar++;
+                }
+            }
+        }
+
+        similarityToKeywords = numOfSimilar / (double)words.size();
     }
 }

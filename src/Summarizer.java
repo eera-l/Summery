@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Created by Federica on 26/04/2018.
@@ -9,9 +8,12 @@ public class Summarizer {
     private String beginningText;
     private ArrayList<Sentence> sentences = new ArrayList<>();
     public static HashMap<String, Integer> frequencyMap = new HashMap<>();
+    public static String[] keywords;
 
     public Summarizer(String text) {
+
         beginningText = text;
+        keywords = new String[calculateNumOfKeywords()];
     }
 
     public ArrayList<Sentence> getSentences() {
@@ -66,7 +68,11 @@ public class Summarizer {
 
         for (Sentence s : sentences) {
             for (String w : s.getWords()) {
-                if (w.length() >= 4) {
+                if (w.length() >= 4 && !w.equals("that") && !w.equals("with") && !w.equals("over")
+                        && !w.equals("they") && !w.equals("does") && !w.equals("when")
+                        && !w.equals("goes") && !w.equals("where") && !w.equals("which")
+                        && !w.equals("without") && !w.equals("some") && !w.equals("said")
+                        && !w.equals("then") && !w.equals("from") && !w.equals("this") && !w.equals("went")) {
                     if (!frequencyMap.containsKey(w)) {
                         frequencyMap.put(w, 1);
                     } else {
@@ -98,5 +104,68 @@ public class Summarizer {
             sentences.get(i).setSimilarityToTitle(wordsInCommon / (double)sentences.get(i).getWords().size());
             wordsInCommon = 0;
         }
+    }
+
+    /**
+     * Sorts the words in the hashmap by frequency
+     * and saves the ones with the highest frequency
+     */
+    public void setKeywords() {
+
+        Map<String, Integer> sortedMap = sortByValue(frequencyMap);
+
+        Set<String> keys = sortedMap.keySet();
+        String[] keysArray = keys.toArray(new String[keys.size()]);
+
+        for (int i = 0; i < keywords.length; i++) {
+            keywords[i] = keysArray[i];
+        }
+    }
+
+    /**
+     * Sets num of keywords based on text length
+     * @return num of keywords
+     */
+    private int calculateNumOfKeywords() {
+
+        int num = 0;
+        if (beginningText.length() > 0 && beginningText.length() <= 1000) {
+            num = 3;
+        } else if (beginningText.length() > 1000 && beginningText.length() <= 3000) {
+            num = 4;
+        } else if (beginningText.length() > 3000 && beginningText.length() <= 10000) {
+            num = 5;
+        } else if (beginningText.length() > 10000) {
+            num = 8;
+        }
+
+        return num;
+    }
+
+    /**
+     * Given a hashmap, it returns
+     * a linked hashmap sorted by its values.
+     * Code from https://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values
+     * @param map hashmap
+     * @param <K> first generic
+     * @param <V> second generic
+     * @return hashmap sorted by value
+     */
+    private static <K, V> Map<K, V> sortByValue(Map<K, V> map) {
+        List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
+        Collections.sort(list, new Comparator<Object>() {
+            @SuppressWarnings("unchecked")
+            public int compare(Object o1, Object o2) {
+                return ((Comparable<V>) ((Map.Entry<K, V>) (o2)).getValue()).compareTo(((Map.Entry<K, V>) (o1)).getValue());
+            }
+        });
+
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Iterator<Map.Entry<K, V>> it = list.iterator(); it.hasNext();) {
+            Map.Entry<K, V> entry = it.next();
+            result.put(entry.getKey(), entry.getValue());
+        }
+
+        return result;
     }
 }
