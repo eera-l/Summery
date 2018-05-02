@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,7 @@ public class Main {
             e.printStackTrace();
         }
     }
-    // http://localhost:6789/test?p=userID&t=Love,+oneness,+is+no+separation+between+you+and+life.+It+is+a+progressive+letting+go,+a+progressive+not+fault+finding.&cookie=this_is_a_cookie
+    // http://194.47.40.14:6789/test?p=userID&t=Love,+oneness,+is+no+separation+between+you+and+life.+It+is+a+progressive+letting+go,+a+progressive+not+fault+finding.&cookie=this_is_a_cookie
     static class MyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
@@ -38,9 +39,22 @@ public class Main {
             parseQuery(query, parameters);
             t.setAttribute("parameters", parameters);
 
+            System.out.println(t.getRemoteAddress());
 
             String text = (String) parameters.get("t");
-//
+            // Start the algorithm
+            response = Algo.run(text);
+            t.getResponseHeaders().add("Access-Control-Allow-Origin","*");
+            if (t.getRequestMethod().equalsIgnoreCase("options")){
+                t.getResponseHeaders().add("Access-Control-Allow-Methods","GET, OPTIONS");
+                t.getResponseHeaders().add("Access-Control-Allow-Headers","Content-Type, Authorization");
+            }
+            t.sendResponseHeaders(200, response.getBytes(StandardCharsets.UTF_8).length);
+            // send the response
+            OutputStream os = t.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+
             if (parameters.containsKey("cookie")&& parameters.containsKey("p")){
                 new Thread(new Runnable() {
                     @Override
@@ -49,16 +63,6 @@ public class Main {
                     }
                 }).start();
             }
-
-            // Start the algorithm
-            response = Algo.run(text);
-
-
-            // send the response
-            t.sendResponseHeaders(200, response.getBytes().length);
-            OutputStream os = t.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
         }
     }
 
