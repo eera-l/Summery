@@ -173,4 +173,13 @@ public class Summarizer {
 
         return result;
     }
+
+    private void checkDoubleKeywords() {
+        Iterator iterator = frequencyMap.entrySet().iterator();
+        for (Map.Entry entry : frequencyMap.entrySet()) {
+            
+        }
+    }
+
+
 }
