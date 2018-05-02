@@ -7,12 +7,13 @@ public class Summarizer {
 
     private String beginningText;
     private ArrayList<Sentence> sentences = new ArrayList<>();
-    public static HashMap<String, Integer> frequencyMap = new HashMap<>();
+    public static HashMap<String, Integer> frequencyMap;
     public static String[] keywords;
 
     public Summarizer(String text) {
 
         beginningText = text;
+        frequencyMap = new HashMap<>();
         keywords = new String[calculateNumOfKeywords()];
     }
 
@@ -72,7 +73,11 @@ public class Summarizer {
                         && !w.equals("they") && !w.equals("does") && !w.equals("when")
                         && !w.equals("goes") && !w.equals("where") && !w.equals("which")
                         && !w.equals("without") && !w.equals("some") && !w.equals("said")
-                        && !w.equals("then") && !w.equals("from") && !w.equals("this") && !w.equals("went")) {
+                        && !w.equals("then") && !w.equals("from") && !w.equals("this") && !w.equals("went")
+                        && !w.equals("while") && !w.equals("until") && !w.equals("says") && !w.equals("about")
+                        && !w.equals("will") && !w.equals("after") && !w.equals("before")
+                        && !w.equals("well") && !w.equals("have") && !w.equals("done") && !w.equals("been")
+                        && !w.equals("instead")) {
                     if (!frequencyMap.containsKey(w)) {
                         frequencyMap.put(w, 1);
                     } else {
