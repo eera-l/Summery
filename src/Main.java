@@ -17,7 +17,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        try {
+       try {
             HttpServer server = HttpServer.create(new InetSocketAddress(6789), 0);
             server.createContext("/test", new MyHandler());
             server.setExecutor(Executors.newFixedThreadPool(50)); // creates a default executor

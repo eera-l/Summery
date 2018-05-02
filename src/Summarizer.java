@@ -7,13 +7,15 @@ public class Summarizer {
 
     private String beginningText;
     private ArrayList<Sentence> sentences = new ArrayList<>();
-    public static HashMap<String, Integer> frequencyMap;
+    public static LinkedHashMap<String, Integer> frequencyMap;
     public static String[] keywords;
+    public ArrayList<String> doubleKeywords = new ArrayList<>();
+    public ArrayList<Integer> doubleKeywordsFrequency = new ArrayList<>();
 
     public Summarizer(String text) {
 
         beginningText = text;
-        frequencyMap = new HashMap<>();
+        frequencyMap = new LinkedHashMap<>();
         keywords = new String[calculateNumOfKeywords()];
     }
 
@@ -77,7 +79,12 @@ public class Summarizer {
                         && !w.equals("while") && !w.equals("until") && !w.equals("says") && !w.equals("about")
                         && !w.equals("will") && !w.equals("after") && !w.equals("before")
                         && !w.equals("well") && !w.equals("have") && !w.equals("done") && !w.equals("been")
-                        && !w.equals("instead")) {
+                        && !w.equals("instead") && !w.equals("just") && !w.equals("because") && !w.equals("very")
+                        && !w.equals("really") && !w.equals("could") && !w.equals("should") && !w.equals("shall")
+                        && !w.equals("there") && !w.equals("their") && !w.equals("here") && !w.equals("itself")
+                        && !w.equals("herself") && !w.equals("yourself") && !w.equals("himself") && !w.equals("themselves")
+                        && !w.equals("yourselves") && !w.equals("ourselves") && !w.equals("myself") & !w.equals("would")
+                        && !w.equals("wouldn") && !w.equals("shouldn") && !w.equals("more") && !w.equals("much") && !w.equals("most")) {
                     if (!frequencyMap.containsKey(w)) {
                         frequencyMap.put(w, 1);
                     } else {
@@ -113,17 +120,34 @@ public class Summarizer {
 
     /**
      * Sorts the words in the hashmap by frequency
-     * and saves the ones with the highest frequency
+     * and saves the ones with the highest frequency - including two-worded keywords
      */
     public void setKeywords() {
 
         Map<String, Integer> sortedMap = sortByValue(frequencyMap);
+        int doubleKeywordCounter = 0;
+        int regKeywordCounter = 0;
 
         Set<String> keys = sortedMap.keySet();
         String[] keysArray = keys.toArray(new String[keys.size()]);
 
         for (int i = 0; i < keywords.length; i++) {
-            keywords[i] = keysArray[i];
+
+            if (doubleKeywords.size() > 0 && doubleKeywordCounter < doubleKeywords.size()) {
+                if (doubleKeywordsFrequency.get(doubleKeywordCounter) >= sortedMap.get(keysArray[regKeywordCounter])) {
+                    keywords[i] = doubleKeywords.get(doubleKeywordCounter);
+                    doubleKeywordCounter++;
+                    if (doubleKeywords.get(doubleKeywordCounter - 1).contains(keysArray[regKeywordCounter]) && doubleKeywords.get(doubleKeywordCounter - 1).contains(keysArray[regKeywordCounter + 1])) {
+                        regKeywordCounter += 2;
+                    }
+                } else {
+                    keywords[i] = keysArray[i];
+                    regKeywordCounter++;
+                }
+            } else {
+                keywords[i] = keysArray[regKeywordCounter];
+                regKeywordCounter++;
+            }
         }
     }
 
@@ -174,10 +198,18 @@ public class Summarizer {
         return result;
     }
 
-    private void checkDoubleKeywords() {
-        Iterator iterator = frequencyMap.entrySet().iterator();
+    /**
+     * Check if two words occur with the same frequency, at least 3 times
+     * and are close to each other, they count as one single keyword
+     */
+    public void checkDoubleKeywords() {
+        Map.Entry tempEntry = null;
         for (Map.Entry entry : frequencyMap.entrySet()) {
-            
+            if (tempEntry != null && (Integer)tempEntry.getValue() > 2 && tempEntry.getValue() == entry.getValue() ) {
+                doubleKeywords.add((tempEntry.getKey() + " " + entry.getKey()));
+                doubleKeywordsFrequency.add((Integer)tempEntry.getValue());
+            }
+            tempEntry = entry;
         }
     }
 

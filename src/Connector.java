@@ -10,7 +10,7 @@ public class Connector {
         Connection dbconnect;
         Statement statement;
 
-        System.out.println("User: "+userID+" Cookie: "+cookie);
+        System.out.println("User: " + userID + " Cookie: "+cookie);
 //        try{
 //            dbconnect = DriverManager.getConnection("jdbc:mysql://localhost:3306/db", "root", "root");
 //            statement = dbconnect.createStatement();

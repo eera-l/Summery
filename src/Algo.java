@@ -59,6 +59,7 @@ public class Algo {
         summarizer.calculateWordFrequency();
         summarizer.calculateSimilarityToTitle();
         summarizer.setKeywords();
+        summarizer.checkDoubleKeywords();
 
         for (Sentence s : summarizer.getSentences()) {
             text += String.format("Percentile position: %.2f", s.getPercentilePos());
@@ -72,6 +73,10 @@ public class Algo {
         }
         for (String s : Summarizer.keywords) {
             text += "Keyword: " + s + "\n";
+        }
+
+        for (String s : summarizer.doubleKeywords) {
+            text += "Double keyword: " + s + "\n";
         }
         return text;
     }

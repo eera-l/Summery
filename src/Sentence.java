@@ -163,7 +163,12 @@ public class Sentence {
                     && !w.equals("while") && !w.equals("until") && !w.equals("says") && !w.equals("about")
                     && !w.equals("will") && !w.equals("after") && !w.equals("before")
                     && !w.equals("well") && !w.equals("have") && !w.equals("done") && !w.equals("been")
-                    && !w.equals("instead")) {
+                    && !w.equals("instead") && !w.equals("just") && !w.equals("because") && !w.equals("very")
+                    && !w.equals("really") & !w.equals("could") && !w.equals("should") && !w.equals("shall")
+                    && !w.equals("there") && !w.equals("their") && !w.equals("here") && !w.equals("itself")
+                    && !w.equals("herself") && !w.equals("yourself") && !w.equals("himself") && !w.equals("themselves")
+                    && !w.equals("yourselves") && !w.equals("ourselves") && !w.equals("myself") && !w.equals("would")
+                    && !w.equals("wouldn") && !w.equals("shouldn") && !w.equals("more") && !w.equals("much") && !w.equals("most")) {
                 totalFrequency += Summarizer.frequencyMap.get(words.get(i));
                 total++;
             }
