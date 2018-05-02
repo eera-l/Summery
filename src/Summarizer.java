@@ -9,14 +9,16 @@ public class Summarizer {
     private ArrayList<Sentence> sentences = new ArrayList<>();
     public static LinkedHashMap<String, Integer> frequencyMap;
     public static String[] keywords;
-    public ArrayList<String> doubleKeywords = new ArrayList<>();
-    public ArrayList<Integer> doubleKeywordsFrequency = new ArrayList<>();
+    public ArrayList<String> doubleKeywords;
+    public ArrayList<Integer> doubleKeywordsFrequency;
 
     public Summarizer(String text) {
 
         beginningText = text;
         frequencyMap = new LinkedHashMap<>();
         keywords = new String[calculateNumOfKeywords()];
+        doubleKeywords = new ArrayList<>();
+        doubleKeywordsFrequency = new ArrayList<>();
     }
 
     public ArrayList<Sentence> getSentences() {
