@@ -25,7 +25,7 @@ public class Main {
             e.printStackTrace();
         }
     }
-    // http://localhost:6789/test?p=hello&t=Love,+oneness,+is+no+separation+between+you+and+life.+It+is+a+progressive+letting+go,+a+progressive+not+fault+finding.
+    // http://localhost:6789/test?p=userID&t=Love,+oneness,+is+no+separation+between+you+and+life.+It+is+a+progressive+letting+go,+a+progressive+not+fault+finding.&cookie=this_is_a_cookie
     static class MyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
@@ -39,19 +39,21 @@ public class Main {
             t.setAttribute("parameters", parameters);
 
 
-            //response +=parameters.get("p");
             String text = (String) parameters.get("t");
+//
+            if (parameters.containsKey("cookie")&& parameters.containsKey("p")){
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Connector.addCookie((String) parameters.get("p"),(String) parameters.get("cookie"));
+                    }
+                }).start();
+            }
 
             // Start the algorithm
-            Algo algo = new Algo(text);
-            Thread thread = new Thread(algo);
-            thread.start();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            response = algo.getText();
+            response = Algo.run(text);
+
+
             // send the response
             t.sendResponseHeaders(200, response.getBytes().length);
             OutputStream os = t.getResponseBody();

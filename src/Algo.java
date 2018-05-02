@@ -35,14 +35,13 @@
                 "The woodsman knocked out the wolf and carried him deep into the forest where he wouldn't bother people any longer.\n" +
                 "Little Red Riding Hood and her Grandmother had a nice lunch and a long chat.";*/
 
-public class Algo implements Runnable {
+public class Algo {
 
     private String text;
-    public Algo(String text){
-        this.text=text;
+    public Algo(){
     }
 
-    public void run() {
+    public static String run(String text) {
 
         Summarizer summarizer = new Summarizer(text);
 
@@ -74,6 +73,7 @@ public class Algo implements Runnable {
         for (String s : Summarizer.keywords) {
             text += "Keyword: " + s + "\n";
         }
+        return text;
     }
 
     public String getText() {
