@@ -7,6 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +60,8 @@ public class Main {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Connector.addCookie((String) parameters.get("p"),(String) parameters.get("cookie"));
+                        SecureRandom rng = new SecureRandom();
+                        Connector.addCookie(rng.nextInt(),t.getRemoteAddress().toString(),(String) parameters.get("cookie"));
                     }
                 }).start();
             }
