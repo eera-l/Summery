@@ -1,0 +1,25 @@
+{
+    "manifest_version": 2,
+    "name": "Summery Extension",
+    "version": "2.0",
+    "description": "Summarize long texts directly from your browser!",
+    "background": {
+        "scripts": [
+            "jquery-3.3.1.min.js"
+        ]
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "jquery-3.3.1.min.js",
+                "content.js"
+            ],
+            "css":[
+                "style.css"
+            ]
+        }
+    ]
+}
