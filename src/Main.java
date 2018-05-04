@@ -23,13 +23,14 @@ public class Main {
             server.createContext("/test", new MyHandler());
             server.setExecutor(Executors.newFixedThreadPool(50)); // creates a default executor
             server.start();
+            System.out.println("Server is running.");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     // http://194.47.40.14:6789/test?p=userID&t=Love,+oneness,+is+no+separation+between+you+and+life.+It+is+a+progressive+letting+go,+a+progressive+not+fault+finding.&cookie=this_is_a_cookie
     static class MyHandler implements HttpHandler {
-        private Connector connector = new Connector();
+        //private Connector connector = new Connector();
         @Override
         public void handle(HttpExchange t) throws IOException {
             String response;
@@ -44,6 +45,7 @@ public class Main {
             System.out.println(t.getRemoteAddress());
 
             String text = (String) parameters.get("t");
+            text = text.replace("percent","%");
             // Start the algorithm
             response = Algo.run(text);
             t.getResponseHeaders().add("Access-Control-Allow-Origin","*");
@@ -62,7 +64,8 @@ public class Main {
                     @Override
                     public void run() {
                         SecureRandom rng = new SecureRandom();
-                        connector.addCookie(rng.nextInt(),t.getRemoteAddress().toString(),(String) parameters.get("cookie"));
+
+                        //connector.addCookie(rng.nextInt(),t.getRemoteAddress().toString(),(String) parameters.get("cookie"));
                     }
                 }).start();
             }

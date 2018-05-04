@@ -49,9 +49,9 @@ public class Algo {
         text = "";
 
         for (Sentence s : summarizer.getSentences()) {
-            text += s.getText()+"\n";
-            text += "Words: " + s.countWordsInSentence()+"\n";
-            text +="--------------\n";
+            text += s.getText()+"<br />";
+            text += "Words: " + s.countWordsInSentence()+"<br />";
+            text +="--------------<br />";
             s.extractWords();
         }
 
@@ -69,14 +69,14 @@ public class Algo {
             text += String.format(" Average frequency: %.2f", s.getMeanWordFrequency());
             text += String.format(" Similarity to title: %.2f", s.getSimilarityToTitle());
             text += String.format(" Similarity to keywords: %.2f%n", s.getSimilarityToKeywords());
-            text += "------------------------------------\n";
+            text += "------------------------------------<hr />";
         }
         for (String s : Summarizer.keywords) {
-            text += "Keyword: " + s + "\n";
+            text += "Keyword: " + s + "<br />";
         }
 
         for (String s : summarizer.doubleKeywords) {
-            text += "Double keyword: " + s + "\n";
+            text += "Double keyword: " + s + "<br />";
         }
         return text;
     }
