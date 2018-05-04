@@ -28,8 +28,8 @@ public class Summarizer {
     /**
      * Divides text into sentences.
      * Sentences are separated by either a period or
-     * an exclamation point or a question mark.
-     * Three dots do not count as sentence separators.
+     * an exclamation point or a question mark or more than one
+     * than any of them.
      */
     public void divideTextInSentences() {
 
@@ -38,7 +38,9 @@ public class Summarizer {
 
         while (i < beginningText.length()) {
 
-            while ((beginningText.charAt(i) == '.' && ((i > 0 && beginningText.charAt(i - 1) == '.') || (i < beginningText.length() - 1 && beginningText.charAt(i + 1) == '.'))) || (beginningText.charAt(i) != '.' && beginningText.charAt(i) != '!' && beginningText.charAt(i) != '?')) {
+            while ((beginningText.charAt(i) != '.' && beginningText.charAt(i) != '!' && beginningText.charAt(i) != '?') ||
+                    ((beginningText.charAt(i) == '.' || beginningText.charAt(i) == '?' || beginningText.charAt(i) == '!') &&
+                            i < beginningText.length() - 1 && beginningText.charAt(i + 1) != ' '))/*(beginningText.charAt(i) == '.' && ((i > 0 && beginningText.charAt(i - 1) == '.') || (i < beginningText.length() - 1 && (beginningText.charAt(i + 1) == '.'))) || (beginningText.charAt(i) != '.' && beginningText.charAt(i) != '!' && beginningText.charAt(i) != '?'))*/ {
 
                 sentence += beginningText.charAt(i);
 
@@ -86,7 +88,8 @@ public class Summarizer {
                         && !w.equals("there") && !w.equals("their") && !w.equals("here") && !w.equals("itself")
                         && !w.equals("herself") && !w.equals("yourself") && !w.equals("himself") && !w.equals("themselves")
                         && !w.equals("yourselves") && !w.equals("ourselves") && !w.equals("myself") & !w.equals("would")
-                        && !w.equals("wouldn") && !w.equals("shouldn") && !w.equals("more") && !w.equals("much") && !w.equals("most")) {
+                        && !w.equals("wouldn") && !w.equals("shouldn") && !w.equals("more") && !w.equals("much") && !w.equals("most")
+                        && !w.equals("made") && !w.equals("must") && !w.equals("want") && !w.equals("what") && !w.equals("wish")) {
                     if (!frequencyMap.containsKey(w)) {
                         frequencyMap.put(w, 1);
                     } else {
@@ -160,7 +163,9 @@ public class Summarizer {
     private int calculateNumOfKeywords() {
 
         int num = 0;
-        if (beginningText.length() > 0 && beginningText.length() <= 1000) {
+        if (beginningText.length() > 0 && beginningText.length() <= 100) {
+            num = 1;
+        } else if (beginningText.length() > 100 && beginningText.length() <= 1000) {
             num = 3;
         } else if (beginningText.length() > 1000 && beginningText.length() <= 3000) {
             num = 4;
