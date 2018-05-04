@@ -15,6 +15,8 @@ $('.summarize_button').click(function () {
     $('#summarize_container').remove();
 
     var text = $(this).prev('p')[0].textContent;
+    text = text.replace(/%/g,'percent');
+
     text = text.replace(/\s+/g,'%20');
     text = text.replace(/\n+/g,'%20');
     text = text.replace(/"/g,'');
