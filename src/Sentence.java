@@ -169,7 +169,8 @@ public class Sentence {
                     && !w.equals("herself") && !w.equals("yourself") && !w.equals("himself") && !w.equals("themselves")
                     && !w.equals("yourselves") && !w.equals("ourselves") && !w.equals("myself") && !w.equals("would")
                     && !w.equals("wouldn") && !w.equals("shouldn") && !w.equals("more") && !w.equals("much") && !w.equals("most")
-                    && !w.equals("made") && !w.equals("must") && !w.equals("want") && !w.equals("what") && !w.equals("wish")) {
+                    && !w.equals("made") && !w.equals("must") && !w.equals("want") && !w.equals("what") && !w.equals("wish")
+                    && !w.equals("your") && !w.equals("once")) {
                 totalFrequency += Summarizer.frequencyMap.get(words.get(i));
                 total++;
             }
