@@ -45,6 +45,7 @@ public class Main {
             System.out.println(t.getRemoteAddress());
 
             String text = (String) parameters.get("t");
+            text = text.replace("percent","%");
             // Start the algorithm
             response = Algo.run(text);
             t.getResponseHeaders().add("Access-Control-Allow-Origin","*");
