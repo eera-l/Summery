@@ -60,6 +60,7 @@ public class Algo {
         summarizer.calculateSimilarityToTitle();
         summarizer.setKeywords();
         summarizer.checkDoubleKeywords();
+        summarizer.calcSentencesRelativeLength();
 
         for (Sentence s : summarizer.getSentences()) {
             text += String.format("Percentile position: %.2f", s.getPercentilePos());
@@ -68,7 +69,8 @@ public class Algo {
             s.calculateSimilarityToKeywords();
             text += String.format(" Average frequency: %.2f", s.getMeanWordFrequency());
             text += String.format(" Similarity to title: %.2f", s.getSimilarityToTitle());
-            text += String.format(" Similarity to keywords: %.2f%n", s.getSimilarityToKeywords());
+            text += String.format(" Similarity to keywords: %.2f", s.getSimilarityToKeywords());
+            text += String.format(" Relative length: %.2f%n", s.getRelativeLength());
             text += "------------------------------------<hr />";
         }
         for (String s : Summarizer.keywords) {

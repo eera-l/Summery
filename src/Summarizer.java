@@ -221,5 +221,36 @@ public class Summarizer {
         }
     }
 
+    /**
+     * Finds size of the largest sentence in the text
+     * @return size (i.e. num of words) of the longest sentence in the text
+     */
+    private double findLongestSentenceSize() {
+
+        int index = 0;
+
+        for (int i = 1; i < sentences.size(); i++) {
+            if (sentences.get(i).getWords().size() > sentences.get(index).getWords().size()) {
+                index = i;
+            }
+        }
+
+        return (double)sentences.get(index).getWords().size();
+    }
+
+    /**
+     * Calculates the relative length
+     * for each sentence
+     */
+    public void calcSentencesRelativeLength() {
+
+        double maxSize = findLongestSentenceSize();
+
+        for (int i = 0; i < sentences.size(); i++) {
+            sentences.get(i).calcRelativeLength(maxSize);
+        }
+    }
+
+
 
 }

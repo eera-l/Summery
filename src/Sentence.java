@@ -8,9 +8,10 @@ public class Sentence {
     private String text;
     private int wordsInText;
     private ArrayList<String> words;
-    private double deltaX;
-    private double deltaY;
-    private double magnitude;
+
+    private double relativeLength;
+    //length of the sentence compared to longest sentence in the document
+
     private double percentilePos;
     //percentile position of the sentence in the document, calculated by
     //position number of the sentence in the document / total num of sentences in the document
@@ -29,14 +30,6 @@ public class Sentence {
     public Sentence(String text) {
         this.text = text;
         words = new ArrayList<>();
-    }
-
-    public double getDeltaX() {
-        return deltaX;
-    }
-
-    public double getDeltaY() {
-        return deltaY;
     }
 
     public String getText() {
@@ -63,25 +56,12 @@ public class Sentence {
 
     public double getSimilarityToKeywords() { return similarityToKeywords; }
 
-    public void setDeltaX(double x) {
-        deltaX = x;
-    }
-
-    public void setDeltaY(double y) {
-        deltaY = y;
-    }
+    public double getRelativeLength() { return relativeLength; }
 
     public void setSimilarityToTitle(double similarityToTitle) {
         this.similarityToTitle = similarityToTitle;
     }
 
-    public double getMagnitude() {
-        return calculateMagnitude();
-    }
-
-    private double calculateMagnitude() {
-        return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-    }
 
     /**
      * Counts words in a sentence. Words are separated
@@ -196,5 +176,13 @@ public class Sentence {
         }
 
         similarityToKeywords = numOfSimilar / (double)words.size();
+    }
+
+    /**
+     * Words in sentence / num of words in longest sentence
+     * @param longestSentenceLength longest sentence in the text
+     */
+    public void calcRelativeLength(double longestSentenceLength) {
+        relativeLength = words.size() / longestSentenceLength;
     }
 }
