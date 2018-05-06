@@ -251,6 +251,98 @@ public class Summarizer {
         }
     }
 
+    /**
+     * Initializes array of cohesive values
+     * in Sentence
+     */
+    private void initializeSentences() {
+        for (int i = 0; i < sentences.size(); i++) {
+
+            sentences.get(i).setSimilarityToOtherSentences(sentences.size() - 1);
+        }
+    }
+
+    /**
+     * A total of 4 nested loops to calculate how many words
+     * each sentence has in common with all other sentences
+     * in the text
+     */
+    public void calcSimilarityToOtherSentences() {
+        initializeSentences();
+
+        int firstSentenceIndex = 0;
+        int secondSentenceIndex = 0;
+        int sentenceCounter = 0;
+
+        for (int i = 0; i < sentences.size(); i++) {
+
+            for (int j = 0; j < sentences.size(); j++) {
+
+                if (i != j) {
+
+                    firstSentenceIndex = 0;
+                    while (firstSentenceIndex < sentences.get(i).getWords().size()) {
+                        secondSentenceIndex = 0;
+                        while (secondSentenceIndex < sentences.get(j).getWords().size()) {
+
+                            if (sentences.get(i).getWords().get(firstSentenceIndex).equals(sentences.get(j).getWords().get(secondSentenceIndex))) {
+                                sentences.get(i).getSimilarityToOtherSentences()[sentenceCounter]++;
+                            }
+                            secondSentenceIndex++;
+                        }
+                        firstSentenceIndex++;
+
+                    }
+                    //sentences.get(i).getSimilarityToOtherSentences()[sentenceCounter] = sentences.get(i).getSimilarityToOtherSentences()[sentenceCounter] / sentences.get(i).getWords().size();
+                    sentenceCounter++;
+                }
+
+            }
+            sentenceCounter = 0;
+        }
+    }
+
+    /**
+     * Calls for method in Sentence
+     */
+    private void calcRawCohesionValue() {
+
+        for (Sentence s : sentences) {
+            s.calcRawCohesionValue();
+        }
+    }
+
+    /**
+     * Finds alrgest RCV
+     * @return largest RCV
+     */
+    private double findLargestRawCohesionValue() {
+
+        calcRawCohesionValue();
+
+        int index = 0;
+
+        for (int i = 1; i < sentences.size(); i++) {
+
+            if (sentences.get(i).getRawCohesionValue() > sentences.get(index).getRawCohesionValue()) {
+                index = i;
+            }
+        }
+        return sentences.get(index).getRawCohesionValue();
+    }
+
+    /**
+     * Calculates CV for each sentence
+     */
+    public void calcCohesionValue() {
+
+        double maxCV = findLargestRawCohesionValue();
+
+        for (Sentence s : sentences) {
+            s.calcCohesionValue(maxCV);
+        }
+    }
+
 
 
 }

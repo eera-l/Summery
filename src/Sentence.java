@@ -26,10 +26,19 @@ public class Sentence {
     private double similarityToKeywords; //average of how many wprds in the sentence
     //match the text's keywords as calculated in the Summarizer class
 
+    private double[] similarityToOtherSentences; //for each other sentence in the text
+    //it collects how many words they have in common divided by num of words in this sentence
+
+    private double rawCohesionValue; //sum of all elements of similarityToOtherSentences
+
+    private double cohesionValue; //rawCohesionValue / largest rawCohesionValue in the document
+
 
     public Sentence(String text) {
         this.text = text;
         words = new ArrayList<>();
+        rawCohesionValue = 0.0;
+        cohesionValue = 0.0;
     }
 
     public String getText() {
@@ -58,9 +67,17 @@ public class Sentence {
 
     public double getRelativeLength() { return relativeLength; }
 
+    public double getRawCohesionValue() { return rawCohesionValue; }
+
+    public double getCohesionValue() { return cohesionValue; }
+
+    public double[] getSimilarityToOtherSentences() { return similarityToOtherSentences; }
+
     public void setSimilarityToTitle(double similarityToTitle) {
         this.similarityToTitle = similarityToTitle;
     }
+
+    public void setSimilarityToOtherSentences(int numOfSentences) { similarityToOtherSentences = new double[numOfSentences]; }
 
 
     /**
@@ -184,5 +201,24 @@ public class Sentence {
      */
     public void calcRelativeLength(double longestSentenceLength) {
         relativeLength = words.size() / longestSentenceLength;
+    }
+
+    /**
+     * Sum of cohesion values
+     */
+    public void calcRawCohesionValue() {
+        for (double d : similarityToOtherSentences) {
+            rawCohesionValue += d;
+        }
+    }
+
+    /**
+     * Cohesion value of the sentence divided by largest cohesion
+     * value in the document. Sentences with cohesion value
+     * closer to 1 are the most cohesive
+     * @param largestCV largest cohesion value, duh
+     */
+    public void calcCohesionValue(double largestCV) {
+        cohesionValue = rawCohesionValue / largestCV;
     }
 }
