@@ -40,7 +40,16 @@ public class Summarizer {
 
             while ((beginningText.charAt(i) != '.' && beginningText.charAt(i) != '!' && beginningText.charAt(i) != '?') ||
                     ((beginningText.charAt(i) == '.' || beginningText.charAt(i) == '?' || beginningText.charAt(i) == '!') &&
-                            i < beginningText.length() - 1 && beginningText.charAt(i + 1) != ' '))/*(beginningText.charAt(i) == '.' && ((i > 0 && beginningText.charAt(i - 1) == '.') || (i < beginningText.length() - 1 && (beginningText.charAt(i + 1) == '.'))) || (beginningText.charAt(i) != '.' && beginningText.charAt(i) != '!' && beginningText.charAt(i) != '?'))*/ {
+                            i < beginningText.length() - 1 && beginningText.charAt(i + 1) != ' ') || (i > 1 && beginningText.charAt(i) == '.'
+            && Character.isLetter(beginningText.charAt(i - 1)) && beginningText.charAt(i - 2) == ' ') ||
+                    (i > 2 && beginningText.charAt(i) == '.' && Character.isLetter(beginningText.charAt(i - 1))
+                    && beginningText.charAt(i - 2) == '.') || (i > 1 && beginningText.charAt(i) == '.' &&
+            beginningText.charAt(i - 1) == 'r' && beginningText.charAt(i - 2) == 'M') || (i > 1 && beginningText.charAt(i) == '.' &&
+                    beginningText.charAt(i - 1) == 's' && beginningText.charAt(i - 2) == 'M') || (i > 2 && beginningText.charAt(i) == '.' && beginningText.charAt(i - 1) == 'c'
+            && beginningText.charAt(i - 2) == 't' && beginningText.charAt(i - 3) == 'e') || (i > 2 && beginningText.charAt(i) == '.' && beginningText.charAt(i - 1) == 't'
+                    && beginningText.charAt(i - 2) == 'i' && beginningText.charAt(i - 3) == 'l') || (i > 2 && beginningText.charAt(i) == '.' && beginningText.charAt(i - 1) == 's'
+                    && beginningText.charAt(i - 2) == 'r' && beginningText.charAt(i - 3) == 'M') || (i > 1 && beginningText.charAt(i) == '.' &&
+                    beginningText.charAt(i - 1) == 'r' && beginningText.charAt(i - 2) == 'D')) {
 
                 sentence += beginningText.charAt(i);
 
