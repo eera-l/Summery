@@ -92,11 +92,11 @@ public class Connector {
     }
 
 
-    public void addCookie(int userID, String ip, String cookie){
+    public void addCookie(String userID, String ip, String cookie){
         System.out.println("User: " + userID + " Cookie: "+cookie);
         try{
             statement = connection.createStatement();
-            statement.executeUpdate("insert user set iduser = " + userID + ", ip_address  = '" + ip + "', cookies ='"+cookie+"';");
+            statement.executeUpdate("insert user set iduser = '" + userID + "', ip_address  = '" + ip + "', cookies ='"+cookie+"';");
 
         } catch (Exception e) {
             e.printStackTrace();
