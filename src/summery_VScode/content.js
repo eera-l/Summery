@@ -31,7 +31,9 @@ chrome.storage.sync.get("UID", function(result){
 var paragraphs = $('body p');
 
 for(Element of paragraphs){
-    if(Element.textContent.trim() !== ""){
+    // show summarize button only if there are more than 3 sentences in a paragraph
+    if(Element.textContent.trim() !== "" && Element.textContent.split('.').length>3){
+        console.log(Element.textContent.split('.').length);
         console.log(Element.className += 'summarize_me');
     }
 }
