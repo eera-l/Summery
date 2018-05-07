@@ -72,12 +72,16 @@ public class Algo {
 
             s.calculateMeanFrequency();
             s.calculateSimilarityToKeywords();
+            s.extractProperNames();
+            s.checkForAnaphors();
             text += String.format(" Average frequency: %.2f", s.getMeanWordFrequency());
             text += String.format(" Similarity to title: %.2f", s.getSimilarityToTitle());
             text += String.format(" Similarity to keywords: %.2f", s.getSimilarityToKeywords());
             text += String.format(" Relative length: %.2f", s.getRelativeLength());
-            text += String.format(" Cohesion value: %.2f%n", s.getCohesionValue());
+            text += String.format(" Cohesion value: %.2f", s.getCohesionValue());
             //text += String.format(" Main concept indicator: %b%n", s.getMainConcept());
+            text += String.format(" Has proper names: %b", s.getHasProperName());
+            text += String.format(" Has anaphors: %b%n", s.getHasAnaphors());
             text += "------------------------------------<hr />";
         }
         for (String s : Summarizer.keywords) {

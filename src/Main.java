@@ -47,6 +47,7 @@ public class Main {
 
             String text = (String) parameters.get("t");
             text = text.replace("percent","%");
+            //text = text.replace("\"", "\\\"");
             // Start the algorithm
             response = Algo.run(text);
             t.getResponseHeaders().add("Access-Control-Allow-Origin","*");
