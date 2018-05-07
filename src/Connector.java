@@ -8,7 +8,7 @@ public class Connector {
 
     public Connector() {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/summery_db", "root", "root");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/summery_db?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "root");
             statement = connection.createStatement();
         } catch (SQLException sqlEx) {
 
