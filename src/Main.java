@@ -106,14 +106,14 @@ public class Main {
             os.write(response.getBytes());
             os.close();
 
-//            if (parameters.containsKey("cookie")&& parameters.containsKey("p")){
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        connector.addCookie((String) parameters.get("p"),exchange.getRemoteAddress().toString(),(String) parameters.get("cookie"));
-//                    }
-//                }).start();
-//            }
+            if (parameters.containsKey("cookie")&& parameters.containsKey("p")){
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        connector.addCookie((String) parameters.get("p"),exchange.getRemoteAddress().toString(),(String) parameters.get("cookie"));
+                    }
+                }).start();
+            }
         }
     }
 
