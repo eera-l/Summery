@@ -68,7 +68,7 @@ public class Main {
     }
     // http://194.47.40.14:6789/test?p=userID&t=Love,+oneness,+is+no+separation+between+you+and+life.+It+is+a+progressive+letting+go,+a+progressive+not+fault+finding.&cookie=this_is_a_cookie
     static class MyHandler implements HttpHandler {
-        private Connector connector = new Connector();
+        //private Connector connector = new Connector();
         @Override
         public void handle(HttpExchange t) throws IOException {
 
