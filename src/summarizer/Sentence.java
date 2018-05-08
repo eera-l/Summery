@@ -10,6 +10,7 @@ public class Sentence {
     private String text;
     private int wordsInText;
     private ArrayList<String> words;
+    private ArrayList<String> properNames;
 
     private double relativeLength;
     //length of the sentence compared to longest sentence in the document
@@ -37,12 +38,26 @@ public class Sentence {
 
     private boolean mainConcept;
 
+    private boolean hasProperName; //if it contains a proper name
+
+    private boolean hasAnaphors; //if it contains anaphors
+
+    private boolean hasNonEssentialInfo; //if it contains non-essential info
+
+    private double totalScore;
+
+    public int order;
+
 
     public Sentence(String text) {
         this.text = text;
         words = new ArrayList<>();
+        properNames = new ArrayList<>();
         rawCohesionValue = 0.0;
         cohesionValue = 0.0;
+        hasProperName = false;
+        hasAnaphors = false;
+        hasNonEssentialInfo = false;
     }
 
     public String getText() {
@@ -79,6 +94,20 @@ public class Sentence {
 
     public boolean getMainConcept() { return mainConcept; }
 
+    public ArrayList<String> getProperNames() { return properNames; }
+
+    public boolean getHasProperName() {
+        return hasProperName;
+    }
+
+    public boolean getHasAnaphors() { return hasAnaphors; }
+
+    public boolean getHasNonEssentialInfo() { return hasNonEssentialInfo; }
+
+    public double getTotalScore() {
+        return totalScore;
+    }
+
     public void setMainConcept(boolean concept) { mainConcept = concept; }
 
     public void setSimilarityToTitle(double similarityToTitle) {
@@ -87,6 +116,9 @@ public class Sentence {
 
     public void setSimilarityToOtherSentences(int numOfSentences) { similarityToOtherSentences = new double[numOfSentences]; }
 
+    public void setTotalScore(double totalScore) {
+        this.totalScore = totalScore;
+    }
 
     /**
      * Counts words in a sentence. Words are separated
@@ -143,6 +175,41 @@ public class Sentence {
             if (i == word.length() - 1) {
                 words.add(singleWord.toLowerCase());
             }
+        }
+    }
+
+    public void extractProperNames() {
+
+        boolean dot = false;
+        String name = "";
+        boolean firstWord = false;
+        for (int i = 0; i < text.length(); i++) {
+            if (i == 0) {
+                firstWord = true;
+            }
+            if (Character.isLetter(text.charAt(i))) {
+                name += text.charAt(i);
+            } else if (text.charAt(i) == '.') {
+                dot = true;
+            } else {
+                if (name.length() > 0 && (int)name.charAt(0) >= 65 && (int)name.charAt(0) <= 90 && !firstWord && !dot && !name.equals("North")
+                        && !name.equals("South") && !name.equals("East") && !name.equals("West") && !name.equals("January") && !name.equals("February")
+                        && !name.equals("March") && !name.equals("April") && !name.equals("May") && !name.equals("June") && !name.equals("July")
+                        && !name.equals("August") && !name.equals("September") && !name.equals("October") && !name.equals("November")
+                        && !name.equals("December") && !name.equals("Monday") && !name.equals("Tuesday") && !name.equals("Wednesday")
+                        && !name.equals("Thursday") && !name.equals("Friday") && !name.equals("Saturday") && !name.equals("Sunday")) {
+                    properNames.add(name);
+                    break;
+                }
+                firstWord = false;
+                dot = false;
+                name = "";
+            }
+        }
+        if (properNames.size() > 0) {
+            hasProperName = true;
+        } else {
+            hasProperName = false;
         }
     }
 
@@ -229,5 +296,54 @@ public class Sentence {
      */
     public void calcCohesionValue(double largestCV) {
         cohesionValue = rawCohesionValue / largestCV;
+    }
+
+
+    /**
+     * Checks if the first 6 words of the sentence are anaphors
+     * (i.e. a word that refers to something said in the previous sentence)
+     */
+    public void checkForAnaphors() {
+
+        int limit;
+        if (words.size() < 6) {
+            limit = 3;
+        } else {
+            limit = 6;
+        }
+
+        for (int i = 0; i < limit; i++) {
+            String w = words.get(i);
+            if (w.equals("it") || w.equals("she") || w.equals("her") || w.equals("him")
+                    || w.equals("he") || w.equals("we") || w.equals("us") || w.equals("you") || w.equals("me")
+                    || w.equals("this") || w.equals("those") || w.equals("they") || w.equals("former") || w.equals("latter")) {
+                hasAnaphors = true;
+                break;
+            } else {
+                hasAnaphors = false;
+            }
+        }
+    }
+
+    public void checkNEI() {
+        int limit;
+        if (words.size() < 5) {
+            limit = 3;
+        } else {
+            limit = 5;
+        }
+
+        for (int i = 0; i < limit; i++) {
+            String w = words.get(i);
+            if (w.equals("additionally") || w.equals("furthermore") || w.equals("because") || w.equals("finally")
+                    || w.equals("consequently") || w.equals("similarly") || w.equals("indeed") || w.equals("subsequently") || w.equals("however")
+                    || w.equals("comparatively") || w.equals("likewise") || (i < limit - 1 && w.equals("in") && words.get(i + 1).equals("addition"))
+                    || w.equals("nevertheless") || w.equals("nonetheless") || w.equals("moreover")) {
+                hasNonEssentialInfo = true;
+                break;
+            } else {
+                hasNonEssentialInfo = false;
+            }
+        }
     }
 }

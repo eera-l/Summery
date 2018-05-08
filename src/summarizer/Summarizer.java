@@ -18,6 +18,8 @@ public class Summarizer {
     public ArrayList<Integer> doubleKeywordsFrequency;
     public ArrayList<String> mfNouns;
     public ArrayList<String> nounKeywords;
+    public final int COMPRESSION_RATE = 40;
+    public ArrayList<Sentence> finalSentences;
 
     public Summarizer(String text) {
 
@@ -28,6 +30,7 @@ public class Summarizer {
         doubleKeywordsFrequency = new ArrayList<>();
         mfNouns = new ArrayList<>();
         nounKeywords = new ArrayList<>();
+        finalSentences = new ArrayList<>();
     }
 
     public ArrayList<Sentence> getSentences() {
@@ -69,6 +72,7 @@ public class Summarizer {
             }
             sentence += beginningText.charAt(i);
             sentences.add(new Sentence(sentence));
+            sentences.get(sentences.size() - 1).order = sentences.size() - 1;
             sentence = "";
             i += 2; //Skip space after period
         }
@@ -422,5 +426,184 @@ public class Summarizer {
                 }
             }
         }
+    }
+
+    public void chooseSentences() {
+
+        int numOfFinalSentences = (sentences.size() * COMPRESSION_RATE) / 100;
+        numOfFinalSentences = sentences.size() - numOfFinalSentences;
+
+        int thirtyPercent = (numOfFinalSentences * 30) / 100;
+
+
+        //NOTE: now similarity to title is / 2 because it should not be as important as other features.
+        //This is because the title is the first sentence of the paragraph which often has nothing to do
+        //with the actual title of the document
+
+        //Calculate total score for each sentence
+        for (int i = 0; i < sentences.size(); i++) {
+            sentences.get(i).setTotalScore(sentences.get(i).getRelativeLength() + sentences.get(i).getSimilarityToKeywords() +
+                    sentences.get(i).getCohesionValue() + (sentences.get(i).getSimilarityToTitle() / 2) + sentences.get(i).getMeanWordFrequency());
+        }
+
+        //Always add first and last sentences of the text
+        finalSentences.add(sentences.get(0));
+        finalSentences.add(sentences.get(sentences.size() - 1));
+
+        //Sort them by total score in descending order
+       Collections.sort(sentences, new Comparator<Sentence>() {
+            @Override
+            public int compare(Sentence o1, Sentence o2) {
+                if (o2.getTotalScore() > o1.getTotalScore()) {
+                    return 1;
+                } else if (o2.getTotalScore() == o1.getTotalScore()) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            }
+        });
+
+        //Pick 30% of sentences from the beginning of the text, 30% from the middle
+        //and 30% from the end preferably with proper names, no anaphores and no non-essential info
+        //higher score first
+        int begCounter = 0;
+        int i = 0;
+        while (i < sentences.size() && begCounter <= thirtyPercent && finalSentences.size() <= numOfFinalSentences) {
+
+            if (sentences.get(i).getPercentilePos() <= 0.33) {
+                if (!finalSentences.contains(sentences.get(i)) && sentences.get(i).getHasProperName() && !sentences.get(i).getHasAnaphors() && !sentences.get(i).getHasNonEssentialInfo()) {
+                    finalSentences.add(sentences.get(i));
+                    begCounter++;
+                }
+            }
+            i++;
+        }
+
+        if (begCounter < thirtyPercent) {
+            i = 0;
+            while (i < sentences.size() && begCounter <= thirtyPercent && finalSentences.size() <= numOfFinalSentences) {
+                if (sentences.get(i).getPercentilePos() <= 0.33) {
+                    if (!finalSentences.contains(sentences.get(i)) && !sentences.get(i).getHasProperName() && !sentences.get(i).getHasAnaphors() && !sentences.get(i).getHasNonEssentialInfo()) {
+                        finalSentences.add(sentences.get(i));
+                        begCounter++;
+                    }
+                }
+                i++;
+            }
+
+        }
+
+        if (begCounter < thirtyPercent) {
+            i = 0;
+            while (i < sentences.size() && begCounter <= thirtyPercent && finalSentences.size() <= numOfFinalSentences) {
+                if (sentences.get(i).getPercentilePos() <= 0.33) {
+                    if (!finalSentences.contains(sentences.get(i)) && sentences.get(i).getHasAnaphors() && !sentences.get(i).getHasNonEssentialInfo()) {
+                        finalSentences.add(sentences.get(i));
+                        begCounter++;
+                    }
+                }
+                i++;
+            }
+
+        }
+
+        int medCounter = 0;
+        int j = 0;
+        while (j < sentences.size() && medCounter <= thirtyPercent && finalSentences.size() <= numOfFinalSentences) {
+
+            if (sentences.get(j).getPercentilePos() > 0.33 && sentences.get(j).getPercentilePos() <= 0.66) {
+                if (!finalSentences.contains(sentences.get(j)) && sentences.get(j).getHasProperName() && !sentences.get(j).getHasAnaphors() && !sentences.get(j).getHasNonEssentialInfo()) {
+                    finalSentences.add(sentences.get(j));
+                    medCounter++;
+                }
+            }
+            j++;
+        }
+
+        if (medCounter < thirtyPercent) {
+            j = 0;
+            while (j < sentences.size() && medCounter <= thirtyPercent && finalSentences.size() <= numOfFinalSentences) {
+                if (sentences.get(j).getPercentilePos() > 0.33 && sentences.get(j).getPercentilePos() <= 0.66) {
+                    if (!finalSentences.contains(sentences.get(j)) && !sentences.get(j).getHasProperName() && !sentences.get(j).getHasAnaphors() && !sentences.get(j).getHasNonEssentialInfo()) {
+                        finalSentences.add(sentences.get(j));
+                        medCounter++;
+                    }
+                }
+                j++;
+            }
+
+        }
+
+        if (medCounter < thirtyPercent) {
+            j = 0;
+            while (j < sentences.size() && medCounter <= thirtyPercent && finalSentences.size() <= numOfFinalSentences) {
+                if (sentences.get(j).getPercentilePos() > 0.33 && sentences.get(j).getPercentilePos() <= 0.66) {
+                    if (!finalSentences.contains(sentences.get(j)) && sentences.get(j).getHasAnaphors() && !sentences.get(j).getHasNonEssentialInfo()) {
+                        finalSentences.add(sentences.get(j));
+                        medCounter++;
+                    }
+                }
+                j++;
+            }
+
+        }
+
+        int endCounter = 0;
+        int k = 0;
+        while (k < sentences.size() && endCounter <= thirtyPercent && finalSentences.size() <= numOfFinalSentences) {
+
+            if (sentences.get(k).getPercentilePos() > 0.66) {
+                if (!finalSentences.contains(sentences.get(k)) && sentences.get(k).getHasProperName() && !sentences.get(k).getHasAnaphors() && !sentences.get(k).getHasNonEssentialInfo()) {
+                    finalSentences.add(sentences.get(k));
+                    endCounter++;
+                }
+            }
+            k++;
+        }
+
+        if (endCounter < thirtyPercent) {
+            k = 0;
+            while (k < sentences.size() && endCounter <= thirtyPercent && finalSentences.size() <= numOfFinalSentences) {
+                if (sentences.get(k).getPercentilePos() > 0.66) {
+                    if (!finalSentences.contains(sentences.get(k)) && !sentences.get(k).getHasProperName() && !sentences.get(k).getHasAnaphors() && !sentences.get(k).getHasNonEssentialInfo()) {
+                        finalSentences.add(sentences.get(k));
+                        endCounter++;
+                    }
+                }
+                k++;
+            }
+
+        }
+
+        if (endCounter < thirtyPercent) {
+            k = 0;
+            while (k < sentences.size() && endCounter <= thirtyPercent && finalSentences.size() <= numOfFinalSentences) {
+                if (sentences.get(k).getPercentilePos() > 0.66) {
+                    if (!finalSentences.contains(sentences.get(k)) && sentences.get(k).getHasAnaphors() && !sentences.get(k).getHasNonEssentialInfo()) {
+                        finalSentences.add(sentences.get(k));
+                        endCounter++;
+                    }
+                }
+                k++;
+            }
+
+        }
+
+        //Sort them back by order
+        Collections.sort(finalSentences, new Comparator<Sentence>() {
+            @Override
+            public int compare(Sentence o1, Sentence o2) {
+                if (o1.order > o2.order) {
+                    return 1;
+                } else if (o1.order == o2.order) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            }
+        });
+
+
     }
 }
