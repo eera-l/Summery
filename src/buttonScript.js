@@ -24,7 +24,8 @@ function button_onClick() {
      text = text.replace(/\\/g,'');
 
     var client = new HttpClient();
-    client.get('http://81.230.35.11:6789/test?p=userID&t='+text, function(response) {
+    client.get('http://localhost:6789/test?p=userID&t='+text, function(response) {
         document.getElementById("summarizedText").innerText = response;
+        //81.230.35.11:6789
     });
 }
