@@ -10,5 +10,9 @@
     <orderEntry type="library" name="mysql-connector-java-8.0.11" level="project" />
     <orderEntry type="library" name="opennlp-tools-1.8.4" level="project" />
     <orderEntry type="library" name="opennlp-tools-1.8.4" level="project" />
+    <orderEntry type="library" name="opennlp-tools-1.8.4" level="project" />
+    <orderEntry type="library" name="mysql-connector-java-8.0.11 (2)" level="project" />
+    <orderEntry type="library" name="mysql-connector-java-8.0.11 (3)" level="project" />
+    <orderEntry type="library" name="opennlp-tools-1.8.4 (2)" level="project" />
   </component>
 </module>
