@@ -41,7 +41,7 @@ public class Algo {
     public Algo(){
     }
 
-    public static String run(String text) {
+    public static String run(String text, String heading) {
 
         Summarizer summarizer = new Summarizer(text);
 
@@ -57,7 +57,7 @@ public class Algo {
 
         summarizer.calcSentencePercPos();
         summarizer.calculateWordFrequency();
-        summarizer.calculateSimilarityToTitle();
+        summarizer.calculateSimilarityToTitle(heading);
         summarizer.setKeywords();
         summarizer.checkDoubleKeywords();
         summarizer.calcSentencesRelativeLength();
