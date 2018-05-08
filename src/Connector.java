@@ -96,7 +96,12 @@ public class Connector {
         System.out.println("User: " + userID + " Cookie: "+cookie);
         try{
             statement = connection.createStatement();
-            statement.executeUpdate("insert user set iduser = '" + userID + "', ip_address  = '" + ip + "', cookies ='"+cookie+"';");
+
+            boolean exists = statement.execute("select exists( select  * from user where iduser = '"+ userID +"')");
+            if (!exists){
+                statement.executeUpdate("insert into user(iduser, ip_address) values('"+ userID + "', '"+ ip +"');");
+            }
+            statement.executeUpdate("insert into cookie(cookies, iduser) value('" + cookie +"','"+  userID + "');");
 
         } catch (Exception e) {
             e.printStackTrace();
