@@ -96,7 +96,9 @@ public class Main {
                 text+=".";
             }
             // Start the algorithm
-            response = Algo.run(text);
+            String heading = (String) parameters.get("heading");
+            response = Algo.run(text,heading);
+            System.out.println("Article heading: " + heading);
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin","*");
             if (exchange.getRequestMethod().equalsIgnoreCase("options")){
                 exchange.getResponseHeaders().add("Access-Control-Allow-Methods","GET, OPTIONS");

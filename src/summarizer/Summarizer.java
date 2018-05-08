@@ -133,7 +133,7 @@ public class Summarizer {
      * of the list. The number of words in common is then divided by the number
      * of words in the sentence.
      */
-    public void calculateSimilarityToTitle() {
+    public void calculateSimilarityToTitle(String heading) {
 
         sentences.get(0).setSimilarityToTitle(1);
         double wordsInCommon = 0;
