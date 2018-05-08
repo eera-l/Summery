@@ -32,8 +32,8 @@ var paragraphs = $('body p');
 
 for(Element of paragraphs){
     // show summarize button only if there are more than 3 sentences in a paragraph
-    if(Element.textContent.trim() !== "" && Element.textContent.split('.').length>3){
-        console.log(Element.textContent.split('.').length);
+    if(Element.textContent.trim() !== "" && Element.textContent.split('.').length>3 || Element.textContent.split(',').length>5){
+        //console.log(Element.textContent.split('.').length);
         console.log(Element.className += 'summarize_me');
     }
 }
@@ -54,6 +54,7 @@ function escapeChars(pairs){
     pairs = pairs.replace(/\)/g,'');
     pairs = pairs.replace(/{/g,'');
     pairs = pairs.replace(/}/g,'');
+    pairs = pairs.replace(/|/g,'');
     var ignore = "\\";
     pairs = pairs.replace(ignore,'');
     pairs = pairs.replace(/\[.*?\]/g,'');
@@ -82,10 +83,17 @@ $('.summarize_button').click(function () {
     var text = $(this).prev('p')[0].textContent;
     text = escapeChars(text);
 
+    var heading = $('body H1');
+    var h;
+    if(heading[0].innerText !== ""){
+        h = "&heading=" + heading[0].innerText;
+    }
+
+
     // URL syntax:
     // IP_ADDRESS:6789/test?p= USER ID &t= TEXT &cookie= COOKIES
     $.ajax({
-        url: "https://localhost:6789/test?p="+UID.toString()+"&t=" + text+"&cookie="+cookies,
+        url: "https://localhost:6789/test?p="+UID.toString()+"&t=" + text + "&cookie=" + cookies + h,
         method: "GET",
         success: function (result) {
             $('body').append('<div id="summarize_container"> <div class="alert-close">×</div>' + result + '</div></div>');

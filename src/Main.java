@@ -1,5 +1,7 @@
 import com.sun.net.httpserver.*;
 import summarizer.Algo;
+import summarizer.Sentence;
+import summarizer.Summarizer;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -19,7 +21,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-       try {
+        try {
             HttpsServer server = HttpsServer.create(new InetSocketAddress(6789), 0);
             SSLContext sslContext = SSLContext.getInstance("TLS");
 
@@ -94,7 +96,9 @@ public class Main {
                 text+=".";
             }
             // Start the algorithm
-            response = Algo.run(text);
+            String heading = (String) parameters.get("heading");
+            response = Algo.run(text,heading);
+            System.out.println("Article heading: " + heading);
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin","*");
             if (exchange.getRequestMethod().equalsIgnoreCase("options")){
                 exchange.getResponseHeaders().add("Access-Control-Allow-Methods","GET, OPTIONS");
