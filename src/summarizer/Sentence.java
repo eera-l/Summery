@@ -44,6 +44,10 @@ public class Sentence {
 
     private boolean hasNonEssentialInfo; //if it contains non-essential info
 
+    private double totalScore;
+
+    public int order;
+
 
     public Sentence(String text) {
         this.text = text;
@@ -100,6 +104,10 @@ public class Sentence {
 
     public boolean getHasNonEssentialInfo() { return hasNonEssentialInfo; }
 
+    public double getTotalScore() {
+        return totalScore;
+    }
+
     public void setMainConcept(boolean concept) { mainConcept = concept; }
 
     public void setSimilarityToTitle(double similarityToTitle) {
@@ -108,6 +116,9 @@ public class Sentence {
 
     public void setSimilarityToOtherSentences(int numOfSentences) { similarityToOtherSentences = new double[numOfSentences]; }
 
+    public void setTotalScore(double totalScore) {
+        this.totalScore = totalScore;
+    }
 
     /**
      * Counts words in a sentence. Words are separated

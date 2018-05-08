@@ -49,9 +49,10 @@ public class Algo {
         text = "";
 
         for (Sentence s : summarizer.getSentences()) {
-            text += s.getText()+"<br />";
+            /*text += s.getText()+"<br />";
             text += "Words: " + s.countWordsInSentence()+"<br />";
-            text +="--------------<br />";
+            text +="--------------<br />";*/
+            s.countWordsInSentence();
             s.extractWords();
         }
 
@@ -68,14 +69,14 @@ public class Algo {
         //summarizer.setMainConceptIndicator();
 
         for (Sentence s : summarizer.getSentences()) {
-            text += String.format("Percentile position: %.2f", s.getPercentilePos());
+            //text += String.format("Percentile position: %.2f", s.getPercentilePos());
 
             s.calculateMeanFrequency();
             s.calculateSimilarityToKeywords();
             s.extractProperNames();
             s.checkForAnaphors();
             s.checkNEI();
-            text += String.format(" Average frequency: %.2f", s.getMeanWordFrequency());
+            /*text += String.format(" Average frequency: %.2f", s.getMeanWordFrequency());
             text += String.format(" Similarity to title: %.2f", s.getSimilarityToTitle());
             text += String.format(" Similarity to keywords: %.2f", s.getSimilarityToKeywords());
             text += String.format(" Relative length: %.2f", s.getRelativeLength());
@@ -84,15 +85,25 @@ public class Algo {
             text += String.format(" Has proper names: %b", s.getHasProperName());
             text += String.format(" Has anaphors: %b", s.getHasAnaphors());
             text += String.format(" Has non-essential info: %b%n", s.getHasNonEssentialInfo());
-            text += "------------------------------------<hr />";
+            text += "------------------------------------<hr />";*/
         }
-        for (String s : Summarizer.keywords) {
+        summarizer.chooseSentences();
+
+        text += "Sentences in source text: " + summarizer.getSentences().size() + "<br />";
+        text += "Sentences in summary: " + summarizer.finalSentences.size();
+        text += "<hr />";
+
+        for (Sentence s : summarizer.finalSentences) {
+            text += s.getText() + "<br />";
+        }
+
+        /*for (String s : Summarizer.keywords) {
             text += "Keyword: " + s + "<br />";
         }
 
         for (String s : summarizer.doubleKeywords) {
             text += "Double keyword: " + s + "<br />";
-        }
+        }*/
 
         return text;
     }
