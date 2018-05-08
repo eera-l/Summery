@@ -32,17 +32,15 @@ var paragraphs = $('body p');
 
 for(Element of paragraphs){
     // show summarize button only if there are more than 3 sentences in a paragraph
-    if(Element.textContent.trim() !== "" && Element.textContent.split('.').length>3){
+    if(Element.textContent.trim() !== "" && Element.textContent.split('.').length>3 || Element.textContent.split(',').length>5){
         console.log(Element.textContent.split('.').length);
         console.log(Element.className += 'summarize_me');
     }
 }
 
-// get cookies and escape characters to prevent APOCALYPSE
-var getCookies = function(){
-    var domain = window.location.hostname;
-    var pairs = document.cookie;
+function escapeChars(pairs){
     pairs = pairs.replace(/%/g,'PRC');
+    pairs = pairs.replace(/&/g, "and");
     pairs = pairs.replace(/\s+/g,'%20');
     pairs = pairs.replace(/\n+/g,'%20');
     pairs = pairs.replace(/"/g,'');
@@ -52,15 +50,28 @@ var getCookies = function(){
     pairs = pairs.replace(/\\/g,'');
     pairs = pairs.replace(/,/g,'');
     pairs = pairs.replace(/;/g,'');
+    pairs = pairs.replace(/\(/g,'');
+    pairs = pairs.replace(/\)/g,'');
+    pairs = pairs.replace(/{/g,'');
+    pairs = pairs.replace(/}/g,'');
     var ignore = "\\";
     pairs = pairs.replace(ignore,'');
     pairs = pairs.replace(/\[.*?\]/g,'');
+    return pairs;
+}
+// get cookies and escape characters to prevent APOCALYPSE
+var getCookies = function(){
+    var domain = window.location.hostname;
+    var pairs = document.cookie;
+    pairs = escapeChars(pairs);
     domain = domain+"+"+pairs;
     return domain;
 };
 
 var cookies = getCookies();
 //window.alert(UID+"\n"+UID.toString());
+
+
 
 $('<button type="button" class="summarize_button">Summarize</button>').insertAfter('.summarize_me');
 
@@ -69,18 +80,7 @@ $('.summarize_button').click(function () {
     $('#summarize_container').remove();
 
     var text = $(this).prev('p')[0].textContent;
-    text = text.replace(/%/g,'percent');
-
-    text = text.replace(/\s+/g,'%20');
-    text = text.replace(/\n+/g,'%20');
-    text = text.replace(/"/g,'');
-    text = text.replace(/'/g,'');
-    text = text.replace(/=/g,'%20');
-    text = text.replace(/:/g,'%20');
-    text = text.replace(/\\/g,'');
-    var ignore = "\\";
-    text = text.replace(ignore,'');
-    text = text.replace(/\[.*?\]/g,'');
+    text = escapeChars(text);
 
     // URL syntax:
     // IP_ADDRESS:6789/test?p= USER ID &t= TEXT &cookie= COOKIES
