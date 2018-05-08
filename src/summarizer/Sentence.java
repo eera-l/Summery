@@ -308,11 +308,31 @@ public class Sentence {
                     || w.equals("this") || w.equals("those") || w.equals("they") || w.equals("former") || w.equals("latter")) {
                 hasAnaphors = true;
                 break;
+            } else {
+                hasAnaphors = false;
             }
         }
     }
 
     public void checkNEI() {
+        int limit;
+        if (words.size() < 5) {
+            limit = 3;
+        } else {
+            limit = 5;
+        }
 
+        for (int i = 0; i < limit; i++) {
+            String w = words.get(i);
+            if (w.equals("additionally") || w.equals("furthermore") || w.equals("because") || w.equals("finally")
+                    || w.equals("consequently") || w.equals("similarly") || w.equals("indeed") || w.equals("subsequently") || w.equals("however")
+                    || w.equals("comparatively") || w.equals("likewise") || (i < limit - 1 && w.equals("in") && words.get(i + 1).equals("addition"))
+                    || w.equals("nevertheless") || w.equals("nonetheless") || w.equals("moreover")) {
+                hasNonEssentialInfo = true;
+                break;
+            } else {
+                hasNonEssentialInfo = false;
+            }
+        }
     }
 }

@@ -74,6 +74,7 @@ public class Algo {
             s.calculateSimilarityToKeywords();
             s.extractProperNames();
             s.checkForAnaphors();
+            s.checkNEI();
             text += String.format(" Average frequency: %.2f", s.getMeanWordFrequency());
             text += String.format(" Similarity to title: %.2f", s.getSimilarityToTitle());
             text += String.format(" Similarity to keywords: %.2f", s.getSimilarityToKeywords());
@@ -81,7 +82,8 @@ public class Algo {
             text += String.format(" Cohesion value: %.2f", s.getCohesionValue());
             //text += String.format(" Main concept indicator: %b%n", s.getMainConcept());
             text += String.format(" Has proper names: %b", s.getHasProperName());
-            text += String.format(" Has anaphors: %b%n", s.getHasAnaphors());
+            text += String.format(" Has anaphors: %b", s.getHasAnaphors());
+            text += String.format(" Has non-essential info: %b%n", s.getHasNonEssentialInfo());
             text += "------------------------------------<hr />";
         }
         for (String s : Summarizer.keywords) {
