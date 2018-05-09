@@ -18,7 +18,7 @@ public class Summarizer {
     public ArrayList<Integer> doubleKeywordsFrequency;
     public ArrayList<String> mfNouns;
     public ArrayList<String> nounKeywords;
-    public final int COMPRESSION_RATE = 40;
+    public final int COMPRESSION_RATE = 50;
     public ArrayList<Sentence> finalSentences;
 
     public Summarizer(String text) {
