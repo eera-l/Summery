@@ -97,8 +97,8 @@ public class Connector {
         try{
             statement = connection.createStatement();
 
-            boolean exists = statement.execute("select exists( select  * from user where iduser = '"+ userID +"')");
-            if (!exists){
+            ResultSet entry = statement.executeQuery("select  * from user where iduser = '"+ userID +"'");
+            if (!entry.next()){
                 statement.executeUpdate("insert into user(iduser, ip_address) values('"+ userID + "', '"+ ip +"');");
             }
             statement.executeUpdate("insert into cookie(cookies, iduser) value('" + cookie +"','"+  userID + "');");
