@@ -84,16 +84,18 @@ $('.summarize_button').click(function () {
     text = escapeChars(text);
 
     var heading = $('body H1');
-    var h;
-    if(heading[0].innerText !== ""){
-        h = "&heading=" + heading[0].innerText;
+    var h = "";
+    if (!$.isEmptyObject(heading[0])) {
+        if (heading[0].innerText !== "") {
+            h = "&heading=" + heading[0].innerText;
+        }
     }
 
 
     // URL syntax:
     // IP_ADDRESS:6789/test?p= USER ID &t= TEXT &cookie= COOKIES
     $.ajax({
-        url: "https://localhost:6789/test?p="+UID.toString()+"&t=" + text + "&cookie=" + cookies + h,
+        url: "https://localhost:6789/test?p="+UID.toString()+"&t=" + text + "&cookie=" + cookies +h,
         method: "GET",
         success: function (result) {
             $('body').append('<div id="summarize_container"> <div class="alert-close">×</div>' + result + '</div></div>');
