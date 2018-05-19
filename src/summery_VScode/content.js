@@ -95,7 +95,7 @@ $('.summarize_button').click(function () {
     // URL syntax:
     // IP_ADDRESS:6789/test?p= USER ID &t= TEXT &cookie= COOKIES
     $.ajax({
-        url: "https://localhost:6789/test?p="+UID.toString()+"&t=" + text + "&cookie=" + cookies +h,
+        url: "https://localhost:6789/test?p="+UID.toString()+"&t=" + text + "&cookie=" + cookies + h,
         method: "GET",
         success: function (result) {
             $('body').append('<div id="summarize_container"> <div class="alert-close">×</div>' + result + '</div></div>');

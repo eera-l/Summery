@@ -1,5 +1,6 @@
 package summarizer;
 
+import Neural.matrix.Matrix;
 import summarizer.POSCategorizer;
 import summarizer.Sentence;
 
@@ -20,6 +21,8 @@ public class Summarizer {
     public ArrayList<String> nounKeywords;
     public final int COMPRESSION_RATE = 40;
     public ArrayList<Sentence> finalSentences;
+
+    private Matrix matrix = null;
 
     public Summarizer(String text) {
 
@@ -428,6 +431,8 @@ public class Summarizer {
         }
     }
 
+    public Matrix getMatrix(){return matrix;}
+
     public void chooseSentences() {
 
         int numOfFinalSentences = (sentences.size() * COMPRESSION_RATE) / 100;
@@ -440,12 +445,24 @@ public class Summarizer {
         //This is because the title is the first sentence of the paragraph which often has nothing to do
         //with the actual title of the document
 
+
+        matrix = new Matrix(6,sentences.size());
+
         //Calculate total score for each sentence
         for (int i = 0; i < sentences.size(); i++) {
+            matrix.setW(0,i,sentences.get(i).getRelativeLength());
+            matrix.setW(1,i,sentences.get(i).getSimilarityToKeywords());
+            matrix.setW(2,i,sentences.get(i).getCohesionValue());
+            matrix.setW(3,i,sentences.get(i).getSimilarityToTitle()/2);
+            matrix.setW(4,i,sentences.get(i).getMeanWordFrequency());
+
+
             sentences.get(i).setTotalScore(sentences.get(i).getRelativeLength() + sentences.get(i).getSimilarityToKeywords() +
                     sentences.get(i).getCohesionValue() + (sentences.get(i).getSimilarityToTitle() / 2) + sentences.get(i).getMeanWordFrequency());
-        }
+            matrix.setW(5,i,sentences.get(i).getTotalScore());
 
+        }
+        System.out.println(matrix.toString());
         //Always add first and last sentences of the text
         finalSentences.add(sentences.get(0));
         finalSentences.add(sentences.get(sentences.size() - 1));

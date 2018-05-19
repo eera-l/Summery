@@ -96,7 +96,10 @@ public class Main {
                 text+=".";
             }
             // Start the algorithm
-            String heading = (String) parameters.get("heading");
+            String heading = "None";
+            if (parameters.containsKey("heading")){
+                heading = (String) parameters.get("heading");
+            }
             response = Algo.run(text,heading);
             System.out.println("Article heading: " + heading);
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin","*");
