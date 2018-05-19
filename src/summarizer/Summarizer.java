@@ -1,9 +1,14 @@
 package summarizer;
 
+import Neural.autodiff.Graph;
 import Neural.matrix.Matrix;
+import Neural.model.SigmoidUnit;
+import Neural.model.SineUnit;
+import Neural.model.TanhUnit;
 import summarizer.POSCategorizer;
 import summarizer.Sentence;
 
+import java.security.SecureRandom;
 import java.util.*;
 
 /**
@@ -445,10 +450,18 @@ public class Summarizer {
         //This is because the title is the first sentence of the paragraph which often has nothing to do
         //with the actual title of the document
 
-
+        // Load a mask
         matrix = new Matrix(6,sentences.size());
-
-        //Calculate total score for each sentence
+        Graph graph = new Graph();
+        // TODO replace with trained filter
+        Matrix filter = Matrix.rand(1,6,1,new Random());
+        try {
+            filter = graph.nonlin(new SigmoidUnit(), filter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        System.out.println(filter.toString());
+        // populate the matrix
         for (int i = 0; i < sentences.size(); i++) {
             matrix.setW(0,i,sentences.get(i).getRelativeLength());
             matrix.setW(1,i,sentences.get(i).getSimilarityToKeywords());
@@ -456,13 +469,55 @@ public class Summarizer {
             matrix.setW(3,i,sentences.get(i).getSimilarityToTitle()/2);
             matrix.setW(4,i,sentences.get(i).getMeanWordFrequency());
 
-
+            //Calculate total score for each sentence
             sentences.get(i).setTotalScore(sentences.get(i).getRelativeLength() + sentences.get(i).getSimilarityToKeywords() +
-                    sentences.get(i).getCohesionValue() + (sentences.get(i).getSimilarityToTitle() / 2) + sentences.get(i).getMeanWordFrequency());
-            matrix.setW(5,i,sentences.get(i).getTotalScore());
+                    sentences.get(i).getCohesionValue() + (sentences.get(i).getSimilarityToTitle()/2) + sentences.get(i).getMeanWordFrequency());
+            matrix.setW(5,i,sentences.get(i).getTotalScore()/5);
 
         }
-        System.out.println(matrix.toString());
+        try {
+            matrix = graph.nonlin(new SigmoidUnit(),matrix);
+            System.out.println(matrix.toString());
+
+            // Multiply a matrix by a filter
+            StringBuilder returnString = new StringBuilder();
+            matrix = graph.mul(filter,matrix);
+            System.out.println(matrix.toString());
+            // Create an array to hold indexes of selected sentences
+            int [] index = new int[matrix.w.length*COMPRESSION_RATE/100];
+            returnString.append("<br />Sentences in summary with AI: ").append(index.length+2).append("<hr />");
+            returnString.append(sentences.get(0).getText()).append("<br/>");
+
+            // find MAX in the product of matrices
+            for (int j = 0;j<index.length;j++){
+                int max = 0;
+                for (int i =1;i<matrix.w.length-1;i++) {
+                    if (matrix.w[i]>max){
+                        max = i;
+                        // Clear the value, so the sentence wouldn't be repeated
+                        matrix.w[i] = 0;
+                    }
+                }
+                if (max!=0) {
+                    index[j] = max;
+                }
+            }
+            // Sort the selected values, so it would follow the text
+            Arrays.sort(index);
+            for (int i :index){
+                System.out.print(i+"\t\t");
+                // Add it to the string to return
+                returnString.append(sentences.get(i).getText()).append("<br/>");
+            }
+            System.out.println();
+            // add the last sentence
+            returnString.append(sentences.get(sentences.size()-1).getText()).append("<br/>");
+            returnString.append("<hr />");
+            // insert the summary as one sentence.
+            finalSentences.add(new Sentence(returnString.toString()));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         //Always add first and last sentences of the text
         finalSentences.add(sentences.get(0));
         finalSentences.add(sentences.get(sentences.size() - 1));

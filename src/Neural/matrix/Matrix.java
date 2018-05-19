@@ -59,7 +59,7 @@ public class Matrix implements Serializable {
 	public static Matrix rand(int rows, int cols, double initParamsStdDev, Random rng) {
 		Matrix result = new Matrix(rows, cols);
 		for (int i = 0; i < result.w.length; i++) {
-			result.w[i] = rng.nextGaussian() * initParamsStdDev;
+			result.w[i] = Math.abs(rng.nextGaussian() * initParamsStdDev);
 		}
 		return result;
 	}

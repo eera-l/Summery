@@ -97,8 +97,7 @@ public class Algo {
         summarizer.chooseSentences();
 
         text += "Sentences in source text: " + summarizer.getSentences().size() + "<br />";
-        text += "Sentences in summary: " + summarizer.finalSentences.size();
-        text += "<hr />";
+        text += "Sentences in summary: " + (summarizer.finalSentences.size()-1);
 
         for (Sentence s : summarizer.finalSentences) {
             text += s.getText() + "<br />";
