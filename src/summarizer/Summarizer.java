@@ -47,6 +47,7 @@ public class Summarizer {
 
         String sentence = "";
         int i = 0;
+        beginningText = beginningText.replace("\n", " ");
 
         while (i < beginningText.length()) {
 
