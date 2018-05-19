@@ -83,12 +83,10 @@ public class Main {
             URI requestedUri = exchange.getRequestURI();
             String query = requestedUri.getRawQuery();
 
-            System.out.println(query);
 
             parseQuery(query, parameters);
             exchange.setAttribute("parameters", parameters);
 
-            System.out.println(exchange.getRemoteAddress());
 
             String text = (String) parameters.get("t");
             text = text.replace("percent","%");
@@ -96,9 +94,11 @@ public class Main {
                 text+=".";
             }
             // Start the algorithm
-            String heading = (String) parameters.get("heading");
+            String heading = "None";
+            if (parameters.containsKey("heading")){
+                heading = (String) parameters.get("heading");
+            }
             response = Algo.run(text,heading);
-            System.out.println("Article heading: " + heading);
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin","*");
             if (exchange.getRequestMethod().equalsIgnoreCase("options")){
                 exchange.getResponseHeaders().add("Access-Control-Allow-Methods","GET, OPTIONS");
