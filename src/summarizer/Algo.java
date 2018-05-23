@@ -108,7 +108,7 @@ public class Algo {
 
         for (int i = 0; i < 8; i++)
             summarizer.train();
-
+        summarizer.saveFilter();
 
         summarizer.displayForBetterUnderstanding();
 

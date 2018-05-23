@@ -4,6 +4,10 @@ import Neural.autodiff.Graph;
 import Neural.matrix.Matrix;
 import Neural.model.SigmoidUnit;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Random;
 
 /**
@@ -15,13 +19,17 @@ public class FilterTron {
     public final float LEARNING_RATE = 1.0f;
 
     public FilterTron() {
-        filter = Matrix.rand(1,6,1,new Random());
+        loadFilter();
+        if (filter==null){
+            filter = Matrix.rand(1,6,1,new Random());
+        }
         Graph graph = new Graph();
         try {
             filter = graph.nonlin(new SigmoidUnit(), filter);
         } catch (Exception e){
             e.printStackTrace();
         }
+        System.out.println(filter.toString());
     }
 
     public int nonRandomGuess(double[] inputs) {
@@ -48,6 +56,25 @@ public class FilterTron {
 
         for (int i = 0; i < 6; i++) {
             filter.setW(0, i, filter.getW(0 , i) + (error * inputs[i] * LEARNING_RATE));
+        }
+    }
+
+    public void setFilter(Matrix filter){
+        if (filter!=null) {
+            this.filter = filter;
+        }
+    }
+
+    private void loadFilter() {
+        if (!Files.exists(Paths.get("Filter.mx"))){
+            System.out.println("Filter file does not exist.");
+            return;
+        }
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("Filter.mx"))) {
+            setFilter((Matrix) ois.readObject());
+            System.out.println("Filter loaded.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

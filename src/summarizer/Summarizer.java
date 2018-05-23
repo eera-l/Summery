@@ -4,9 +4,13 @@ import Neural.FilterTron;
 import Neural.autodiff.Graph;
 import Neural.matrix.Matrix;
 import Neural.model.SigmoidUnit;
-//import Neural.model.SineUnit;
-//import Neural.model.TanhUnit;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -461,14 +465,6 @@ public class Summarizer {
         // Load a mask
         matrix = new Matrix(6,sentences.size());
         Graph graph = new Graph();
-        // TODO replace with trained filter
-        Matrix filter = Matrix.rand(1,6,1,new Random());
-        try {
-            filter = graph.nonlin(new SigmoidUnit(), filter);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        System.out.println(filter.toString());
         // populate the matrix
         for (int i = 0; i < sentences.size(); i++) {
             matrix.setW(0,i,sentences.get(i).getRelativeLength());
@@ -556,7 +552,7 @@ public class Summarizer {
                 if (!finalSentences.contains(sentences.get(i)) && sentences.get(i).getHasProperName() && !sentences.get(i).getHasAnaphors() && !sentences.get(i).getHasNonEssentialInfo()) {
                     finalSentences.add(sentences.get(i));
                     begCounter++;
-                    System.out.println(i);
+                    //System.out.println(i);
                 }
             }
             i++;
@@ -569,7 +565,7 @@ public class Summarizer {
                     if (!finalSentences.contains(sentences.get(i)) && !sentences.get(i).getHasProperName() && !sentences.get(i).getHasAnaphors() && !sentences.get(i).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(i));
                         begCounter++;
-                        System.out.println(i);
+                       // System.out.println(i);
                     }
                 }
                 i++;
@@ -584,7 +580,7 @@ public class Summarizer {
                     if (!finalSentences.contains(sentences.get(i)) && sentences.get(i).getHasAnaphors() && !sentences.get(i).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(i));
                         begCounter++;
-                        System.out.println(i);
+                       // System.out.println(i);
                     }
                 }
                 i++;
@@ -600,7 +596,7 @@ public class Summarizer {
                 if (!finalSentences.contains(sentences.get(j)) && sentences.get(j).getHasProperName() && !sentences.get(j).getHasAnaphors() && !sentences.get(j).getHasNonEssentialInfo()) {
                     finalSentences.add(sentences.get(j));
                     medCounter++;
-                    System.out.println(j);
+                   // System.out.println(j);
                 }
             }
             j++;
@@ -613,7 +609,7 @@ public class Summarizer {
                     if (!finalSentences.contains(sentences.get(j)) && !sentences.get(j).getHasProperName() && !sentences.get(j).getHasAnaphors() && !sentences.get(j).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(j));
                         medCounter++;
-                        System.out.println(j);
+                        //System.out.println(j);
                     }
                 }
                 j++;
@@ -627,7 +623,7 @@ public class Summarizer {
                 if (sentences.get(j).getPercentilePos() > 0.33 && sentences.get(j).getPercentilePos() <= 0.66) {
                     if (!finalSentences.contains(sentences.get(j)) && sentences.get(j).getHasAnaphors() && !sentences.get(j).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(j));
-                        System.out.println(j);
+                        //System.out.println(j);
                         medCounter++;
                     }
                 }
@@ -643,7 +639,7 @@ public class Summarizer {
             if (sentences.get(k).getPercentilePos() > 0.66) {
                 if (!finalSentences.contains(sentences.get(k)) && sentences.get(k).getHasProperName() && !sentences.get(k).getHasAnaphors() && !sentences.get(k).getHasNonEssentialInfo()) {
                     finalSentences.add(sentences.get(k));
-                    System.out.println(k);
+                    //System.out.println(k);
                     endCounter++;
                 }
             }
@@ -656,7 +652,7 @@ public class Summarizer {
                 if (sentences.get(k).getPercentilePos() > 0.66) {
                     if (!finalSentences.contains(sentences.get(k)) && !sentences.get(k).getHasProperName() && !sentences.get(k).getHasAnaphors() && !sentences.get(k).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(k));
-                        System.out.println(k);
+                        //System.out.println(k);
                         endCounter++;
                     }
                 }
@@ -671,7 +667,7 @@ public class Summarizer {
                 if (sentences.get(k).getPercentilePos() > 0.66) {
                     if (!finalSentences.contains(sentences.get(k)) && sentences.get(k).getHasAnaphors() && !sentences.get(k).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(k));
-                        System.out.println(k);
+                        //System.out.println(k);
                         endCounter++;
                     }
                 }
@@ -822,6 +818,15 @@ public class Summarizer {
         Arrays.sort(helpArray);
         for (int i = 0; i < finalSentences.size(); i++) {
             finalSentencesAI.add(sentences.get(helpArray[i]));
+        }
+    }
+
+    public void saveFilter(){
+        try(ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream("Filter.mx"))){
+            fos.writeObject(filterTron.filter);
+            System.out.println("Filter saved.");
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }
