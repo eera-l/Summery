@@ -35,7 +35,7 @@ package summarizer;/*String text = "Once upon a time, there was a little girl wh
                 "The woodsman knocked out the wolf and carried him deep into the forest where he wouldn't bother people any longer.\n" +
                 "Little Red Riding Hood and her Grandmother had a nice lunch and a long chat.";*/
 
-import Neural.Rnn;
+//import Neural.Rnn;
 
 public class Algo {
 
@@ -97,9 +97,24 @@ public class Algo {
         summarizer.chooseSentences();
 
         text += "Sentences in source text: " + summarizer.getSentences().size() + "<br />";
-        text += "Sentences in summary: " + (summarizer.finalSentences.size()-1);
+        text += "Sentences in summary: " + (summarizer.finalSentences.size()-1) + "<hr />";
+
+        text += "Summary before training: " + "<br />";
 
         for (Sentence s : summarizer.finalSentences) {
+            text += s.getText() + "<br />";
+        }
+        text += "<hr />";
+
+        for (int i = 0; i < 8; i++)
+            summarizer.train();
+
+
+        summarizer.displayForBetterUnderstanding();
+
+        text += "Summary after training: " + "<br />";
+
+        for (Sentence s : summarizer.finalSentencesAI) {
             text += s.getText() + "<br />";
         }
 
