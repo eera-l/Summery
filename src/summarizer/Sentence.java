@@ -11,6 +11,7 @@ public class Sentence {
     private int wordsInText;
     private ArrayList<String> words;
     private ArrayList<String> properNames;
+    private boolean shouldBeIncreased;
 
     private double relativeLength;
     //length of the sentence compared to longest sentence in the document
@@ -108,6 +109,8 @@ public class Sentence {
         return totalScore;
     }
 
+    public boolean getShouldBeIncreased() { return shouldBeIncreased; }
+
     public void setMainConcept(boolean concept) { mainConcept = concept; }
 
     public void setSimilarityToTitle(double similarityToTitle) {
@@ -119,6 +122,8 @@ public class Sentence {
     public void setTotalScore(double totalScore) {
         this.totalScore = totalScore;
     }
+
+    public void setShouldBeIncreased(boolean should) { shouldBeIncreased = should; }
 
     /**
      * Counts words in a sentence. Words are separated
