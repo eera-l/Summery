@@ -97,9 +97,24 @@ public class Algo {
         summarizer.chooseSentences();
 
         text += "Sentences in source text: " + summarizer.getSentences().size() + "<br />";
-        text += "Sentences in summary: " + (summarizer.finalSentences.size()-1);
+        text += "Sentences in summary: " + (summarizer.finalSentences.size()-1) + "<hr />";
+
+        text += "Summary before training: " + "<br />";
 
         for (Sentence s : summarizer.finalSentences) {
+            text += s.getText() + "<br />";
+        }
+        text += "<hr />";
+
+        for (int i = 0; i < 8; i++)
+            summarizer.train();
+        summarizer.saveFilter();
+
+        summarizer.displayForBetterUnderstanding();
+
+        text += "Summary after training: " + "<br />";
+
+        for (Sentence s : summarizer.finalSentencesAI) {
             text += s.getText() + "<br />";
         }
 

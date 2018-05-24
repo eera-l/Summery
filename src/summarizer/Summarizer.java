@@ -1,14 +1,16 @@
 package summarizer;
 
+import Neural.FilterTron;
 import Neural.autodiff.Graph;
 import Neural.matrix.Matrix;
 import Neural.model.SigmoidUnit;
-//import Neural.model.SineUnit;
-//import Neural.model.TanhUnit;
-import summarizer.POSCategorizer;
-import summarizer.Sentence;
 
-import java.security.SecureRandom;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -26,6 +28,8 @@ public class Summarizer {
     public ArrayList<String> nounKeywords;
     public final int COMPRESSION_RATE = 40;
     public ArrayList<Sentence> finalSentences;
+    private FilterTron filterTron;
+    public ArrayList<Sentence> finalSentencesAI;
 
     private Matrix matrix = null;
 
@@ -33,12 +37,15 @@ public class Summarizer {
 
         beginningText = text;
         frequencyMap = new LinkedHashMap<>();
-        keywords = new String[calculateNumOfKeywords()];
+        int numOfKW = calculateNumOfKeywords();
+        keywords = new String[numOfKW];
         doubleKeywords = new ArrayList<>();
         doubleKeywordsFrequency = new ArrayList<>();
         mfNouns = new ArrayList<>();
         nounKeywords = new ArrayList<>();
         finalSentences = new ArrayList<>();
+        finalSentencesAI = new ArrayList<>();
+        filterTron = new FilterTron();
     }
 
     public ArrayList<Sentence> getSentences() {
@@ -50,16 +57,21 @@ public class Summarizer {
      * Sentences are separated by either a period or
      * an exclamation point or a question mark or more than one
      * than any of them.
+     * EDIT: 22/05/2018 question marks do not separate sentences anymore
+     * as done by SMMRY
+     * NOTE: Dr., Mr., Mrs., Ms., Col., Gen., Lt., etc. and lit. do not separate sentences
+     * neither do single letters followed by a period (such as middle name initials).
      */
     public void divideTextInSentences() {
 
         String sentence = "";
         int i = 0;
+        beginningText = beginningText.replace("\n", " ");
 
         while (i < beginningText.length()) {
 
-            while ((beginningText.charAt(i) != '.' && beginningText.charAt(i) != '!' && beginningText.charAt(i) != '?') ||
-                    ((beginningText.charAt(i) == '.' || beginningText.charAt(i) == '?' || beginningText.charAt(i) == '!') &&
+            while ((beginningText.charAt(i) != '.' && beginningText.charAt(i) != '!' /*&& beginningText.charAt(i) != '?'*/) ||
+                    ((beginningText.charAt(i) == '.' /*|| beginningText.charAt(i) == '?'*/ || beginningText.charAt(i) == '!') &&
                             i < beginningText.length() - 1 && beginningText.charAt(i + 1) != ' ') || (i > 1 && beginningText.charAt(i) == '.'
             && Character.isLetter(beginningText.charAt(i - 1)) && beginningText.charAt(i - 2) == ' ') ||
                     (i > 2 && beginningText.charAt(i) == '.' && Character.isLetter(beginningText.charAt(i - 1))
@@ -453,14 +465,6 @@ public class Summarizer {
         // Load a mask
         matrix = new Matrix(6,sentences.size());
         Graph graph = new Graph();
-        // TODO replace with trained filter
-        Matrix filter = Matrix.rand(1,6,1,new Random());
-        try {
-            filter = graph.nonlin(new SigmoidUnit(), filter);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        System.out.println(filter.toString());
         // populate the matrix
         for (int i = 0; i < sentences.size(); i++) {
             matrix.setW(0,i,sentences.get(i).getRelativeLength());
@@ -480,7 +484,7 @@ public class Summarizer {
             System.out.println(matrix.toString());
 
             // Multiply a matrix by a filter
-            StringBuilder returnString = new StringBuilder();
+            /*StringBuilder returnString = new StringBuilder();
             matrix = graph.mul(filter,matrix);
             System.out.println(matrix.toString());
             // Create an array to hold indexes of selected sentences
@@ -514,7 +518,8 @@ public class Summarizer {
             returnString.append(sentences.get(sentences.size()-1).getText()).append("<br/>");
             returnString.append("<hr />");
             // insert the summary as one sentence.
-            finalSentences.add(new Sentence(returnString.toString()));
+            finalSentences.add(new Sentence(returnString.toString()));*/
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -547,6 +552,7 @@ public class Summarizer {
                 if (!finalSentences.contains(sentences.get(i)) && sentences.get(i).getHasProperName() && !sentences.get(i).getHasAnaphors() && !sentences.get(i).getHasNonEssentialInfo()) {
                     finalSentences.add(sentences.get(i));
                     begCounter++;
+                    //System.out.println(i);
                 }
             }
             i++;
@@ -559,6 +565,7 @@ public class Summarizer {
                     if (!finalSentences.contains(sentences.get(i)) && !sentences.get(i).getHasProperName() && !sentences.get(i).getHasAnaphors() && !sentences.get(i).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(i));
                         begCounter++;
+                       // System.out.println(i);
                     }
                 }
                 i++;
@@ -573,6 +580,7 @@ public class Summarizer {
                     if (!finalSentences.contains(sentences.get(i)) && sentences.get(i).getHasAnaphors() && !sentences.get(i).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(i));
                         begCounter++;
+                       // System.out.println(i);
                     }
                 }
                 i++;
@@ -588,6 +596,7 @@ public class Summarizer {
                 if (!finalSentences.contains(sentences.get(j)) && sentences.get(j).getHasProperName() && !sentences.get(j).getHasAnaphors() && !sentences.get(j).getHasNonEssentialInfo()) {
                     finalSentences.add(sentences.get(j));
                     medCounter++;
+                   // System.out.println(j);
                 }
             }
             j++;
@@ -600,6 +609,7 @@ public class Summarizer {
                     if (!finalSentences.contains(sentences.get(j)) && !sentences.get(j).getHasProperName() && !sentences.get(j).getHasAnaphors() && !sentences.get(j).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(j));
                         medCounter++;
+                        //System.out.println(j);
                     }
                 }
                 j++;
@@ -613,6 +623,7 @@ public class Summarizer {
                 if (sentences.get(j).getPercentilePos() > 0.33 && sentences.get(j).getPercentilePos() <= 0.66) {
                     if (!finalSentences.contains(sentences.get(j)) && sentences.get(j).getHasAnaphors() && !sentences.get(j).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(j));
+                        //System.out.println(j);
                         medCounter++;
                     }
                 }
@@ -628,6 +639,7 @@ public class Summarizer {
             if (sentences.get(k).getPercentilePos() > 0.66) {
                 if (!finalSentences.contains(sentences.get(k)) && sentences.get(k).getHasProperName() && !sentences.get(k).getHasAnaphors() && !sentences.get(k).getHasNonEssentialInfo()) {
                     finalSentences.add(sentences.get(k));
+                    //System.out.println(k);
                     endCounter++;
                 }
             }
@@ -640,6 +652,7 @@ public class Summarizer {
                 if (sentences.get(k).getPercentilePos() > 0.66) {
                     if (!finalSentences.contains(sentences.get(k)) && !sentences.get(k).getHasProperName() && !sentences.get(k).getHasAnaphors() && !sentences.get(k).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(k));
+                        //System.out.println(k);
                         endCounter++;
                     }
                 }
@@ -654,6 +667,7 @@ public class Summarizer {
                 if (sentences.get(k).getPercentilePos() > 0.66) {
                     if (!finalSentences.contains(sentences.get(k)) && sentences.get(k).getHasAnaphors() && !sentences.get(k).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(k));
+                        //System.out.println(k);
                         endCounter++;
                     }
                 }
@@ -676,6 +690,143 @@ public class Summarizer {
             }
         });
 
+        Collections.sort(sentences, new Comparator<Sentence>() {
+            @Override
+            public int compare(Sentence o1, Sentence o2) {
+                if (o1.order > o2.order) {
+                    return 1;
+                } else if (o1.order == o2.order) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            }
+        });
 
+
+    }
+
+    //Hard-coded for Cinderella text http://webshare.hkr.se/FECO0002/cinderella.html
+    //18 sentences
+    //Indexes: 0, 1, 3, 4, 9, 18, 19, 22, 23, 25, 27, 28, 30, 31, 33, 35, 37, 40
+    //25 sentences
+    //Indexes: 0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40
+    public void train() {
+
+        //printSeparator();
+        int[] indexes = {0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40};
+        double[] inputs = new double[6];
+
+        //for (int i = 0; i < sentences.size(); i++)
+        for (int i = 0; i < matrix.cols; i++) {
+            /*System.out.printf("Sentence %d: RL: %.2f, SKW: %.2f, CV: %.2f, ST: %.2f, MWF: %.2f, TS: %.2f%n", i,
+                    matrix.getW(0, i), matrix.getW(1, i), matrix.getW(2, i),
+                    matrix.getW(3, i), matrix.getW(4, i), matrix.getW(5, i));*/
+
+            //inputs[0] = sentences.get(i).getRelativeLength();
+            //inputs[1] = sentences.get(i).getSimilarityToKeywords();
+            //inputs[2] = sentences.get(i).getCohesionValue();
+            //inputs[3] = sentences.get(i).getSimilarityToTitle();
+            //inputs[4] = sentences.get(i).getMeanWordFrequency();
+            //inputs[5] = sentences.get(i).getTotalScore();
+            inputs[0] = matrix.getW(0, i); //relative length
+            inputs[1] = matrix.getW(1, i); //similarity to keywords
+            inputs[2] = matrix.getW(2, i); //cohesion value
+            inputs[3] = matrix.getW(3, i); //similarity to title
+            inputs[4] = matrix.getW(4, i); //mean word frequency
+            inputs[5] = matrix.getW(5, i); //total score
+            int guess = filterTron.nonRandomGuess(inputs);
+            boolean isChosen = false;
+            boolean actualChosen;
+            if (finalSentences.contains(sentences.get(i))) {
+                actualChosen = true;
+            } else {
+                actualChosen = false;
+            }
+            for (int j = 0; j < indexes.length; j++) {
+                if (indexes[j] == i) {
+                    isChosen = true;
+                    break;
+                } else {
+                    isChosen = false;
+                }
+            }
+
+            int target = computeIncreasing(isChosen, actualChosen);
+            filterTron.train(inputs, target);
+            if (guess == target) {
+
+            } else {
+                if (isChosen && !actualChosen) {
+                    matrix.setW(5, i, matrix.getW(5, i) + 1);
+                    //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() + 1);
+                } else if (!isChosen && actualChosen) {
+                    matrix.setW(5, i, matrix.getW(5, i) - 1);
+                    //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() - 1);
+                }
+            }
+        }
+    }
+
+    private int computeIncreasing(boolean isChosen, boolean actualIsChosen) {
+
+        if (isChosen && !actualIsChosen) { //sentence should be chosen but it wasn't
+            return 1;
+        } else if (!isChosen && actualIsChosen) { //sentence should not be chosen but it was
+            return -1;
+        } else { //sentence should be chosen and it was, or should not be chosen and it wasn't
+            return 0;
+        }
+    }
+
+    private void printSeparator() {
+        System.out.println("------------ TRAINING -------------");
+    }
+
+    public void displayForBetterUnderstanding() {
+
+        //System.out.println("------------ AFTER TRAINING -----------");
+
+        /*for (int i = 0; i < sentences.size(); i++) {
+            System.out.printf("Sentence %d: RL: %.2f, SKW: %.2f, CV: %.2f, ST: %.2f, MWF: %.2f, TS: %.2f%n", sentences.get(i).order,
+                    sentences.get(i).getRelativeLength(), sentences.get(i).getSimilarityToKeywords(), sentences.get(i).getCohesionValue(),
+                    sentences.get(i).getSimilarityToTitle(), sentences.get(i).getMeanWordFrequency(), sentences.get(i).getTotalScore());
+        }*/
+        /*for (int i = 0; i < matrix.cols; i++) {
+            System.out.printf("Sentence %d: RL: %.2f, SKW: %.2f, CV: %.2f, ST: %.2f, MWF: %.2f, TS: %.2f%n", i,
+                    matrix.getW(0, i), matrix.getW(1, i), matrix.getW(2, i),
+                    matrix.getW(3, i), matrix.getW(4, i), matrix.getW(5, i));
+        }*/
+        reorganizeAISentences();
+    }
+
+    private void reorganizeAISentences() {
+        HashMap<Integer, Double> scores = new HashMap<>();
+        for (int i = 0; i < matrix.cols; i++) {
+            scores.put(i, matrix.getW(5, i));
+        }
+        Map<Integer, Double> sortedScores = sortByValue(scores);
+
+        Set<Integer> indexes = sortedScores.keySet();
+        Integer[] indexArray = indexes.toArray(new Integer[finalSentences.size()]);
+        Integer[] helpArray = new Integer[25];
+
+        for (int i = 0; i < helpArray.length; i++) {
+            helpArray[i] = indexArray[i];
+        }
+
+        Arrays.sort(helpArray);
+        for (int i = 0; i < finalSentences.size(); i++) {
+            finalSentencesAI.add(sentences.get(helpArray[i]));
+        }
+    }
+
+    public void saveFilter(){
+        try(ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream("Filter.mx"))){
+            fos.writeObject(filterTron.filter);
+            System.out.println("Filter saved.");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
