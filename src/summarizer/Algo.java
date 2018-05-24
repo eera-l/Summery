@@ -35,7 +35,7 @@ package summarizer;/*String text = "Once upon a time, there was a little girl wh
                 "The woodsman knocked out the wolf and carried him deep into the forest where he wouldn't bother people any longer.\n" +
                 "Little Red Riding Hood and her Grandmother had a nice lunch and a long chat.";*/
 
-import Neural.Rnn;
+//import Neural.Rnn;
 
 public class Algo {
 

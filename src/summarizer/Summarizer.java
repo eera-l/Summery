@@ -3,8 +3,8 @@ package summarizer;
 import Neural.autodiff.Graph;
 import Neural.matrix.Matrix;
 import Neural.model.SigmoidUnit;
-import Neural.model.SineUnit;
-import Neural.model.TanhUnit;
+//import Neural.model.SineUnit;
+//import Neural.model.TanhUnit;
 import summarizer.POSCategorizer;
 import summarizer.Sentence;
 
