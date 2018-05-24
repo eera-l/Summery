@@ -482,44 +482,6 @@ public class Summarizer {
         try {
             matrix = graph.nonlin(new SigmoidUnit(),matrix);
             System.out.println(matrix.toString());
-
-            // Multiply a matrix by a filter
-            /*StringBuilder returnString = new StringBuilder();
-            matrix = graph.mul(filter,matrix);
-            System.out.println(matrix.toString());
-            // Create an array to hold indexes of selected sentences
-            int [] index = new int[matrix.w.length*COMPRESSION_RATE/100];
-            returnString.append("<br />Sentences in summary with AI: ").append(index.length+2).append("<hr />");
-            returnString.append(sentences.get(0).getText()).append("<br/>");
-
-            // find MAX in the product of matrices
-            for (int j = 0;j<index.length;j++){
-                int max = 0;
-                for (int i =1;i<matrix.w.length-1;i++) {
-                    if (matrix.w[i]>max){
-                        max = i;
-                        // Clear the value, so the sentence wouldn't be repeated
-                        matrix.w[i] = 0;
-                    }
-                }
-                if (max!=0) {
-                    index[j] = max;
-                }
-            }
-            // Sort the selected values, so it would follow the text
-            Arrays.sort(index);
-            for (int i :index){
-                System.out.print(i+"\t\t");
-                // Add it to the string to return
-                returnString.append(sentences.get(i).getText()).append("<br/>");
-            }
-            System.out.println();
-            // add the last sentence
-            returnString.append(sentences.get(sentences.size()-1).getText()).append("<br/>");
-            returnString.append("<hr />");
-            // insert the summary as one sentence.
-            finalSentences.add(new Sentence(returnString.toString()));*/
-
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -797,7 +759,7 @@ public class Summarizer {
                     matrix.getW(0, i), matrix.getW(1, i), matrix.getW(2, i),
                     matrix.getW(3, i), matrix.getW(4, i), matrix.getW(5, i));
         }*/
-        reorganizeAISentences();
+        getAISentences();
     }
 
     private void reorganizeAISentences() {
@@ -828,5 +790,70 @@ public class Summarizer {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private void getAISentences(){
+        Graph graph = new Graph();
+        try {
+            // Multiply a matrix by a filter
+            StringBuilder returnString = new StringBuilder();
+            filterTron.filter = graph.nonlin(new SigmoidUnit(),filterTron.filter);
+            matrix = graph.mul(filterTron.filter, matrix);
+            System.out.println(matrix.toString());
+            // Create an array to hold indexes of selected sentences
+            int[] index = new int[matrix.w.length * COMPRESSION_RATE / 100];
+            returnString.append("<br />Sentences in summary with AI: ").append(index.length + 2).append("<hr />");
+            returnString.append(sentences.get(0).getText()).append("<br/>");
+
+            // find MAX in the product of matrices
+            for (int j = 0; j < index.length; j++) {
+                int max = 0;
+                for (int i = 1; i < matrix.w.length - 1; i++) {
+                    if (matrix.w[i] > max) {
+                        max = i;
+                        // Clear the value, so the sentence wouldn't be repeated
+                        matrix.w[i] = 0;
+                    }
+                }
+                if (max != 0) {
+                    index[j] = max;
+                }
+            }
+            // Sort the selected values, so it would follow the text
+            Arrays.sort(index);
+            int totalMatching = 0;
+            int falseSentences = 0;
+            for (int i : index) {
+                System.out.print(i + "\t\t");
+                int score = checkMatchingSentences(i);
+                // if sentences match
+                if (score>0){
+                    totalMatching++;
+                }else {
+                    falseSentences++;
+                }
+                // Add it to the string to return
+                returnString.append(sentences.get(i).getText()).append("<br/>");
+            }
+            System.out.println("\nMatching Sentences "+totalMatching+"\nFalse sentences "+falseSentences);
+            // add the last sentence
+            returnString.append(sentences.get(sentences.size() - 1).getText()).append("<br/>");
+            returnString.append("<hr />");
+            // insert the summary as one sentence.
+            finalSentencesAI.add(new Sentence(returnString.toString()));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private int checkMatchingSentences(int chosen){
+        int[] indexes = {0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40};
+        for (int i=0;i<indexes.length;i++){
+            if (chosen==indexes[i]){
+                return +1;
+            }
+        }
+        return -1;
+
     }
 }
