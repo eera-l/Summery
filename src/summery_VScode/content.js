@@ -48,7 +48,7 @@ function escapeChars(pairs){
     pairs = pairs.replace(/=/g,'EQL');
     pairs = pairs.replace(/:/g,'%20');
     pairs = pairs.replace(/\\/g,'');
-    pairs = pairs.replace(/,/g,'');
+    pairs = pairs.replace(/,/g,'%2C');
     pairs = pairs.replace(/;/g,'');
     pairs = pairs.replace(/\(/g,'');
     pairs = pairs.replace(/\)/g,'');
