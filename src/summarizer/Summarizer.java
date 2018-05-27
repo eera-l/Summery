@@ -3,7 +3,6 @@ package summarizer;
 import Neural.FilterTron;
 import Neural.autodiff.Graph;
 import Neural.matrix.Matrix;
-import Neural.model.SigmoidUnit;
 
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -465,7 +464,6 @@ public class Summarizer {
 
         // Load a mask
         matrix = new Matrix(6, sentences.size());
-        Graph graph = new Graph();
         // populate the matrix
         for (int i = 0; i < sentences.size(); i++) {
             matrix.setW(0, i, sentences.get(i).getRelativeLength());
@@ -482,7 +480,7 @@ public class Summarizer {
 
         }
         try {
-            matrix = graph.nonlin(new SigmoidUnit(), matrix);
+            Graph.normalize(matrix);
             System.out.println(matrix.toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -699,7 +697,6 @@ public class Summarizer {
                 }
                 falseSentences++;
             }
-            filterTron.normalize();
             // Add it to the string to return
 
         }
@@ -760,7 +757,6 @@ public class Summarizer {
 //            }
 //        }
         System.out.print(filterTron.filter);
-
     }
 
     private int computeIncreasing(boolean isChosen, boolean actualIsChosen) {
@@ -815,6 +811,7 @@ public class Summarizer {
 
     public void saveFilter() {
         try (ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream("Filter.mx"))) {
+            filterTron.normalize();
             fos.writeObject(filterTron.filter);
             System.out.println("Filter saved.");
         } catch (Exception e) {
@@ -828,7 +825,7 @@ public class Summarizer {
             // Multiply a matrix by a filter
             Matrix mx = matrix.clone();
             StringBuilder returnString = new StringBuilder();
-            filterTron.filter = graph.nonlin(new SigmoidUnit(), filterTron.filter);
+            filterTron.normalize();
             mx = graph.mul(filterTron.filter, mx);
             System.out.println(mx.toString());
             // Create an array to hold indexes of selected sentences
@@ -853,6 +850,7 @@ public class Summarizer {
             Arrays.sort(index);
 
             // training
+            for (int i=0;i<100;i++)
             train(index);
 
             for (int i:index){

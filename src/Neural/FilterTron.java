@@ -16,14 +16,13 @@ import java.util.Random;
 public class FilterTron {
 
     public Matrix filter;
-    public final float LEARNING_RATE = 0.01f;
+    public final float LEARNING_RATE = 0.001f;
 
     public FilterTron() {
         loadFilter();
         if (filter==null){
             filter = Matrix.rand(1,6,1,new Random());
         }
-        normalize();
         System.out.println(filter.toString());
     }
 
@@ -52,7 +51,6 @@ public class FilterTron {
         for (int i = 0; i < 6; i++) {
             filter.setW(0, i, filter.getW(0 , i) + (error * inputs[i] * LEARNING_RATE));
         }
-        normalize();
     }
 
     public void setFilter(Matrix filter){
@@ -75,11 +73,7 @@ public class FilterTron {
     }
 
     public void normalize(){
-        Graph graph = new Graph();
-        try {
-            filter = graph.nonlin(new SigmoidUnit(), filter);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+        Graph.normalize(filter);
     }
+
 }
