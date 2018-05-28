@@ -21,7 +21,7 @@ public class Summarizer {
     public ArrayList<Integer> doubleKeywordsFrequency;
     public ArrayList<String> mfNouns;
     public ArrayList<String> nounKeywords;
-    public final int COMPRESSION_RATE = 50;
+    public final int COMPRESSION_RATE = 60;
     public ArrayList<Sentence> finalSentences;
     private FilterTron filterTron;
     public ArrayList<Sentence> finalSentencesAI;
@@ -453,7 +453,8 @@ public class Summarizer {
     public void chooseSentences() {
 
         int numOfFinalSentences = (sentences.size() * COMPRESSION_RATE) / 100;
-        numOfFinalSentences = sentences.size() - numOfFinalSentences;
+        //adapt this compression rate to matrices rate
+        //numOfFinalSentences = sentences.size() - numOfFinalSentences;
 
         int thirtyPercent = (numOfFinalSentences * 30) / 100;
 
@@ -704,64 +705,64 @@ public class Summarizer {
                 "\nMatching rate "+totalMatching*100/(totalMatching+falseSentences));
 
         //printSeparator();
-        int[] indexes = {0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40};
-        //Cinderella: int[] indexes = {0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40};
-        //Snow White: int[] indexes = {0, 1, 2, 3, 4, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 24, 25, 26, 35, 37, 39, 41, 42, 45, 46};
-        //Elephants: int[] indexes = {0, 1, 5, 6, 9, 10, 13, 14, 15, 16, 17, 19, 20, 21, 22, 24, 25, 28, 29};
-        //Quarks: int[] indexes = {0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 25, 29, 30, 32};
-        //AI game: int[] indexes = {3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 18, 19};
-        //Networked cars: int[] indexes = {2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14};
-        double[] inputs = new double[6];
-
-        //for (int i = 0; i < sentences.size(); i++)
-        for (int i = 0; i < matrix.cols; i++) {
-            /*System.out.printf("Sentence %d: RL: %.2f, SKW: %.2f, CV: %.2f, ST: %.2f, MWF: %.2f, TS: %.2f%n", i,
-                    matrix.getW(0, i), matrix.getW(1, i), matrix.getW(2, i),
-                    matrix.getW(3, i), matrix.getW(4, i), matrix.getW(5, i));*/
-
-            //inputs[0] = sentences.get(i).getRelativeLength();
-            //inputs[1] = sentences.get(i).getSimilarityToKeywords();
-            //inputs[2] = sentences.get(i).getCohesionValue();
-            //inputs[3] = sentences.get(i).getSimilarityToTitle();
-            //inputs[4] = sentences.get(i).getMeanWordFrequency();
-            //inputs[5] = sentences.get(i).getTotalScore();
-            inputs[0] = matrix.getW(0, i); //relative length
-            inputs[1] = matrix.getW(1, i); //similarity to keywords
-            inputs[2] = matrix.getW(2, i); //cohesion value
-            inputs[3] = matrix.getW(3, i); //similarity to title
-            inputs[4] = matrix.getW(4, i); //mean word frequency
-            inputs[5] = matrix.getW(5, i); //total score
-            int guess = filterTron.nonRandomGuess(inputs);
-            boolean isChosen = false;
-            boolean actualChosen;
-            if (finalSentences.contains(sentences.get(i))) {
-                actualChosen = true;
-            } else {
-                actualChosen = false;
-            }
-            for (int j = 0; j < indexes.length; j++) {
-                if (indexes[j] == i) {
-                    isChosen = true;
-                    break;
-                } else {
-                    isChosen = false;
-                }
-            }
-
-            int target = computeIncreasing(isChosen, actualChosen);
-            filterTron.train(inputs, target);
-            if (guess == target) {
-
-            } else {
-                if (isChosen && !actualChosen /*|| (isChosen && actualChosen)*/) {
-                    matrix.setW(5, i, matrix.getW(5, i) + 1);
-                    //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() + 1);
-                } else if (!isChosen && actualChosen /*|| (!isChosen && !actualChosen)*/) {
-                    matrix.setW(5, i, matrix.getW(5, i) - 1);
-                    //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() - 1);
-                }
-            }
-        }
+//        int[] indexes = {0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40};
+//        //Cinderella: int[] indexes = {0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40};
+//        //Snow White: int[] indexes = {0, 1, 2, 3, 4, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 24, 25, 26, 35, 37, 39, 41, 42, 45, 46};
+//        //Elephants: int[] indexes = {0, 1, 5, 6, 9, 10, 13, 14, 15, 16, 17, 19, 20, 21, 22, 24, 25, 28, 29};
+//        //Quarks: int[] indexes = {0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 25, 29, 30, 32};
+//        //AI game: int[] indexes = {3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 18, 19};
+//        //Networked cars: int[] indexes = {2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14};
+//        double[] inputs = new double[6];
+//
+//        //for (int i = 0; i < sentences.size(); i++)
+//        for (int i = 0; i < matrix.cols; i++) {
+//            /*System.out.printf("Sentence %d: RL: %.2f, SKW: %.2f, CV: %.2f, ST: %.2f, MWF: %.2f, TS: %.2f%n", i,
+//                    matrix.getW(0, i), matrix.getW(1, i), matrix.getW(2, i),
+//                    matrix.getW(3, i), matrix.getW(4, i), matrix.getW(5, i));*/
+//
+//            //inputs[0] = sentences.get(i).getRelativeLength();
+//            //inputs[1] = sentences.get(i).getSimilarityToKeywords();
+//            //inputs[2] = sentences.get(i).getCohesionValue();
+//            //inputs[3] = sentences.get(i).getSimilarityToTitle();
+//            //inputs[4] = sentences.get(i).getMeanWordFrequency();
+//            //inputs[5] = sentences.get(i).getTotalScore();
+//            inputs[0] = matrix.getW(0, i); //relative length
+//            inputs[1] = matrix.getW(1, i); //similarity to keywords
+//            inputs[2] = matrix.getW(2, i); //cohesion value
+//            inputs[3] = matrix.getW(3, i); //similarity to title
+//            inputs[4] = matrix.getW(4, i); //mean word frequency
+//            inputs[5] = matrix.getW(5, i); //total score
+//            int guess = filterTron.nonRandomGuess(inputs);
+//            boolean isChosen = false;
+//            boolean actualChosen;
+//            if (finalSentences.contains(sentences.get(i))) {
+//                actualChosen = true;
+//            } else {
+//                actualChosen = false;
+//            }
+//            for (int j = 0; j < indexes.length; j++) {
+//                if (indexes[j] == i) {
+//                    isChosen = true;
+//                    break;
+//                } else {
+//                    isChosen = false;
+//                }
+//            }
+//
+//            int target = computeIncreasing(isChosen, actualChosen);
+//            filterTron.train(inputs, target);
+//            if (guess == target) {
+//
+//            } else {
+//                if (isChosen && !actualChosen /*|| (isChosen && actualChosen)*/) {
+//                    matrix.setW(5, i, matrix.getW(5, i) + 1);
+//                    //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() + 1);
+//                } else if (!isChosen && actualChosen /*|| (!isChosen && !actualChosen)*/) {
+//                    matrix.setW(5, i, matrix.getW(5, i) - 1);
+//                    //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() - 1);
+//                }
+//            }
+//        }
         System.out.print(filterTron.filter);
     }
 

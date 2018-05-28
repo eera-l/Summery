@@ -128,6 +128,7 @@ public class Sentence {
     /**
      * Counts words in a sentence. Words are separated
      * by a space or an apostrophe.
+     *
      * @return number of words in a sentence
      */
     public int countWordsInSentence() {
@@ -144,7 +145,8 @@ public class Sentence {
 
     /**
      * Eliminates any punctuation except for spaces from sentence.
-     * Replaces apostrophes with spaces.
+     * NOTE: 28-05-2018 apostrophes are not replaced with spaces anymore.
+     *
      * @return String without any punctuation except for spaces
      */
     public String eliminatePunctuation() {
@@ -152,9 +154,9 @@ public class Sentence {
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) != ' ' && !Character.isLetter(text.charAt(i)) && text.charAt(i) != '\'') {
                 continue;
-            } else if (text.charAt(i) == '\'') {
+            }/* else if (text.charAt(i) == '\'') {
                 text = text.replace('\'', ' ');
-            }
+            }*/
             word += text.charAt(i);
         }
        return word;
@@ -278,6 +280,7 @@ public class Sentence {
 
     /**
      * Words in sentence / num of words in longest sentence
+     *
      * @param longestSentenceLength longest sentence in the text
      */
     public void calcRelativeLength(double longestSentenceLength) {
@@ -297,6 +300,7 @@ public class Sentence {
      * Cohesion value of the sentence divided by largest cohesion
      * value in the document. Sentences with cohesion value
      * closer to 1 are the most cohesive
+     *
      * @param largestCV largest cohesion value, duh
      */
     public void calcCohesionValue(double largestCV) {
