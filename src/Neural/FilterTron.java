@@ -32,8 +32,7 @@ public class FilterTron {
             sum += inputs[i] * filter.getW(0, i);
         }
 
-        int output = activationFunction(sum);
-        return output;
+        return activationFunction(sum);
     }
 
     private int activationFunction(double sum) {
