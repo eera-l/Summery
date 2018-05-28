@@ -858,8 +858,8 @@ public class Summarizer {
             Arrays.sort(index);
 
             // training
-            for (int i=0;i<100;i++)
-            train(index);
+//            for (int i=0;i<100;i++)
+//            train(index);
 
             for (int i:index){
                 returnString.append(sentences.get(i).getText()).append("<br/>");

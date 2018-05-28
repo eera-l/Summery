@@ -74,7 +74,7 @@ public class Connector {
     public void insert(String values) {
 
         try {
-            statement.executeUpdate("INSERT INTO user (iduser, ip_address, cookies) VALUES (" + values + ")");
+            statement.executeUpdate("INSERT INTO user (iduser, ip_address) VALUES (" + values + ")");
 
         } catch (SQLException sqlEx) {
             sqlEx.printStackTrace();
