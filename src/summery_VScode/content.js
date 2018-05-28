@@ -43,15 +43,15 @@ function escapeChars(pairs){
     pairs = pairs.replace(/&/g, "and");
     pairs = pairs.replace(/\s+/g,'%20');
     pairs = pairs.replace(/\n+/g,'%20');
-    pairs = pairs.replace(/"/g,'');
-    pairs = pairs.replace(/'/g,'');
+    pairs = pairs.replace(/"/g,'%22'); //%22
+    pairs = pairs.replace(/'/g,'%27'); //%27
     pairs = pairs.replace(/=/g,'EQL');
-    pairs = pairs.replace(/:/g,'%20');
+    pairs = pairs.replace(/:/g,'%3A'); //%3A
     pairs = pairs.replace(/\\/g,'');
-    pairs = pairs.replace(/,/g,'');
-    pairs = pairs.replace(/;/g,'');
-    pairs = pairs.replace(/\(/g,'');
-    pairs = pairs.replace(/\)/g,'');
+    pairs = pairs.replace(/,/g,'%2C'); //%2C
+    pairs = pairs.replace(/;/g,'%3B'); //%3B
+    pairs = pairs.replace(/\(/g,'%28'); //%28
+    pairs = pairs.replace(/\)/g,'%29'); //%29
     pairs = pairs.replace(/{/g,'');
     pairs = pairs.replace(/}/g,'');
     pairs = pairs.replace(/|/g,'');
