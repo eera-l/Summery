@@ -1,7 +1,5 @@
 import com.sun.net.httpserver.*;
 import summarizer.Algo;
-import summarizer.Sentence;
-import summarizer.Summarizer;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -10,7 +8,6 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -196,4 +196,26 @@ public class Graph {
 		}
 		return out;
 	}
+
+	public static void normalize(Matrix matrix){
+		try {
+			double max = 1;
+			double min = 0;
+			for (int i=0;i<matrix.w.length;i++){
+				if (matrix.w[i]>max){
+					max = matrix.w[i];
+				}else if (matrix.w[i]<min){
+					min=matrix.w[i];
+				}
+			}
+			if (max>1||min<0){
+				for (int i=0;i<matrix.w.length;i++){
+					matrix.w[i] = (matrix.w[i]-min)/(max-min);
+				}
+			}
+			System.out.println("Normalized");
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 }
