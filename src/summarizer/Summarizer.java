@@ -714,7 +714,13 @@ public class Summarizer {
     public void train() {
 
         //printSeparator();
-        int[] indexes = {0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40};
+        int[] indexes = {0, 1, 2, 3, 4, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 24, 25, 26, 35, 37, 39, 41, 42, 45, 46};
+        //Cinderella: int[] indexes = {0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40};
+        //Snow White: int[] indexes = {0, 1, 2, 3, 4, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 24, 25, 26, 35, 37, 39, 41, 42, 45, 46};
+        //Elephants: int[] indexes = {0, 1, 5, 6, 9, 10, 13, 14, 15, 16, 17, 19, 20, 21, 22, 24, 25, 28, 29};
+        //Quarks: int[] indexes = {0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 25, 29, 30, 32};
+        //AI game: int[] indexes = {3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 18, 19};
+        //Networked cars: int[] indexes = {2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14};
         double[] inputs = new double[6];
 
         //for (int i = 0; i < sentences.size(); i++)
@@ -757,10 +763,10 @@ public class Summarizer {
             if (guess == target) {
 
             } else {
-                if (isChosen && !actualChosen) {
+                if ((isChosen && !actualChosen) /*|| (isChosen && actualChosen)*/) {
                     matrix.setW(5, i, matrix.getW(5, i) + 1);
                     //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() + 1);
-                } else if (!isChosen && actualChosen) {
+                } else if ((!isChosen && actualChosen) /*|| (!isChosen && !actualChosen)*/) {
                     matrix.setW(5, i, matrix.getW(5, i) - 1);
                     //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() - 1);
                 }
@@ -809,16 +815,18 @@ public class Summarizer {
 
         Set<Integer> indexes = sortedScores.keySet();
         Integer[] indexArray = indexes.toArray(new Integer[finalSentences.size()]);
-        Integer[] helpArray = new Integer[25];
+        Integer[] helpArray = new Integer[28];
 
         for (int i = 0; i < helpArray.length; i++) {
             helpArray[i] = indexArray[i];
         }
 
         Arrays.sort(helpArray);
-        for (int i = 0; i < finalSentences.size(); i++) {
+        for (int i = 0; i < helpArray.length; i++) {
             finalSentencesAI.add(sentences.get(helpArray[i]));
         }
+
+        System.out.println(filterTron.filter);
     }
 
     public void saveFilter(){
