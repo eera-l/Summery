@@ -3,14 +3,9 @@ package summarizer;
 import Neural.FilterTron;
 import Neural.autodiff.Graph;
 import Neural.matrix.Matrix;
-import Neural.model.SigmoidUnit;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -26,7 +21,7 @@ public class Summarizer {
     public ArrayList<Integer> doubleKeywordsFrequency;
     public ArrayList<String> mfNouns;
     public ArrayList<String> nounKeywords;
-    public final int COMPRESSION_RATE = 40;
+    public final int COMPRESSION_RATE = 50;
     public ArrayList<Sentence> finalSentences;
     private FilterTron filterTron;
     public ArrayList<Sentence> finalSentencesAI;
@@ -73,12 +68,12 @@ public class Summarizer {
             while ((beginningText.charAt(i) != '.' && beginningText.charAt(i) != '!' /*&& beginningText.charAt(i) != '?'*/) ||
                     ((beginningText.charAt(i) == '.' /*|| beginningText.charAt(i) == '?'*/ || beginningText.charAt(i) == '!') &&
                             i < beginningText.length() - 1 && beginningText.charAt(i + 1) != ' ') || (i > 1 && beginningText.charAt(i) == '.'
-            && Character.isLetter(beginningText.charAt(i - 1)) && beginningText.charAt(i - 2) == ' ') ||
+                    && Character.isLetter(beginningText.charAt(i - 1)) && beginningText.charAt(i - 2) == ' ') ||
                     (i > 2 && beginningText.charAt(i) == '.' && Character.isLetter(beginningText.charAt(i - 1))
-                    && beginningText.charAt(i - 2) == '.') || (i > 1 && beginningText.charAt(i) == '.' &&
-            beginningText.charAt(i - 1) == 'r' && beginningText.charAt(i - 2) == 'M') || (i > 1 && beginningText.charAt(i) == '.' &&
+                            && beginningText.charAt(i - 2) == '.') || (i > 1 && beginningText.charAt(i) == '.' &&
+                    beginningText.charAt(i - 1) == 'r' && beginningText.charAt(i - 2) == 'M') || (i > 1 && beginningText.charAt(i) == '.' &&
                     beginningText.charAt(i - 1) == 's' && beginningText.charAt(i - 2) == 'M') || (i > 2 && beginningText.charAt(i) == '.' && beginningText.charAt(i - 1) == 'c'
-            && beginningText.charAt(i - 2) == 't' && beginningText.charAt(i - 3) == 'e') || (i > 2 && beginningText.charAt(i) == '.' && beginningText.charAt(i - 1) == 't'
+                    && beginningText.charAt(i - 2) == 't' && beginningText.charAt(i - 3) == 'e') || (i > 2 && beginningText.charAt(i) == '.' && beginningText.charAt(i - 1) == 't'
                     && beginningText.charAt(i - 2) == 'i' && beginningText.charAt(i - 3) == 'l') || (i > 2 && beginningText.charAt(i) == '.' && beginningText.charAt(i - 1) == 's'
                     && beginningText.charAt(i - 2) == 'r' && beginningText.charAt(i - 3) == 'M') || (i > 1 && beginningText.charAt(i) == '.' &&
                     beginningText.charAt(i - 1) == 'r' && beginningText.charAt(i - 2) == 'D') || (i > 2 && beginningText.charAt(i) == '.' && beginningText.charAt(i - 1) == 'l'
@@ -165,7 +160,7 @@ public class Summarizer {
                     }
                 }
             }
-            sentences.get(i).setSimilarityToTitle(wordsInCommon / (double)sentences.get(i).getWords().size());
+            sentences.get(i).setSimilarityToTitle(wordsInCommon / (double) sentences.get(i).getWords().size());
             wordsInCommon = 0;
         }
     }
@@ -205,6 +200,7 @@ public class Summarizer {
 
     /**
      * Sets num of keywords based on text length
+     *
      * @return num of keywords
      */
     private int calculateNumOfKeywords() {
@@ -229,6 +225,7 @@ public class Summarizer {
      * Given a hashmap, it returns
      * a linked hashmap sorted by its values.
      * Code from https://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values
+     *
      * @param map hashmap
      * @param <K> first generic
      * @param <V> second generic
@@ -236,7 +233,7 @@ public class Summarizer {
      */
     private static <K, V> Map<K, V> sortByValue(Map<K, V> map) {
         List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
-        Collections.sort(list, new Comparator<Object>() {
+        list.sort(new Comparator<Object>() {
             @SuppressWarnings("unchecked")
             public int compare(Object o1, Object o2) {
                 return ((Comparable<V>) ((Map.Entry<K, V>) (o2)).getValue()).compareTo(((Map.Entry<K, V>) (o1)).getValue());
@@ -244,8 +241,7 @@ public class Summarizer {
         });
 
         Map<K, V> result = new LinkedHashMap<>();
-        for (Iterator<Map.Entry<K, V>> it = list.iterator(); it.hasNext();) {
-            Map.Entry<K, V> entry = it.next();
+        for (Map.Entry<K, V> entry : list) {
             result.put(entry.getKey(), entry.getValue());
         }
 
@@ -259,9 +255,9 @@ public class Summarizer {
     public void checkDoubleKeywords() {
         Map.Entry tempEntry = null;
         for (Map.Entry entry : frequencyMap.entrySet()) {
-            if (tempEntry != null && (Integer)tempEntry.getValue() > 2 && tempEntry.getValue() == entry.getValue() ) {
+            if (tempEntry != null && (Integer) tempEntry.getValue() > 2 && tempEntry.getValue() == entry.getValue()) {
                 doubleKeywords.add((tempEntry.getKey() + " " + entry.getKey()));
-                doubleKeywordsFrequency.add((Integer)tempEntry.getValue());
+                doubleKeywordsFrequency.add((Integer) tempEntry.getValue());
             }
             tempEntry = entry;
         }
@@ -269,6 +265,7 @@ public class Summarizer {
 
     /**
      * Finds size of the largest sentence in the text
+     *
      * @return size (i.e. num of words) of the longest sentence in the text
      */
     private double findLongestSentenceSize() {
@@ -281,7 +278,7 @@ public class Summarizer {
             }
         }
 
-        return (double)sentences.get(index).getWords().size();
+        return (double) sentences.get(index).getWords().size();
     }
 
     /**
@@ -360,6 +357,7 @@ public class Summarizer {
 
     /**
      * Finds alrgest RCV
+     *
      * @return largest RCV
      */
     private double findLargestRawCohesionValue() {
@@ -448,7 +446,9 @@ public class Summarizer {
         }
     }
 
-    public Matrix getMatrix(){return matrix;}
+    public Matrix getMatrix() {
+        return matrix;
+    }
 
     public void chooseSentences() {
 
@@ -463,64 +463,26 @@ public class Summarizer {
         //with the actual title of the document
 
         // Load a mask
-        matrix = new Matrix(6,sentences.size());
-        Graph graph = new Graph();
+        matrix = new Matrix(6, sentences.size());
         // populate the matrix
         for (int i = 0; i < sentences.size(); i++) {
-            matrix.setW(0,i,sentences.get(i).getRelativeLength());
-            matrix.setW(1,i,sentences.get(i).getSimilarityToKeywords());
-            matrix.setW(2,i,sentences.get(i).getCohesionValue());
-            matrix.setW(3,i,sentences.get(i).getSimilarityToTitle()/2);
-            matrix.setW(4,i,sentences.get(i).getMeanWordFrequency());
+            matrix.setW(0, i, sentences.get(i).getRelativeLength());
+            matrix.setW(1, i, sentences.get(i).getSimilarityToKeywords());
+            matrix.setW(2, i, sentences.get(i).getCohesionValue());
+            matrix.setW(3, i, sentences.get(i).getSimilarityToTitle() / 2);
+            matrix.setW(4, i, sentences.get(i).getMeanWordFrequency());
 
             //Calculate total score for each sentence
             sentences.get(i).setTotalScore(sentences.get(i).getRelativeLength() + sentences.get(i).getSimilarityToKeywords() +
-                    sentences.get(i).getCohesionValue() + (sentences.get(i).getSimilarityToTitle()/2) + sentences.get(i).getMeanWordFrequency());
-            matrix.setW(5,i,sentences.get(i).getTotalScore()/5);
+                    sentences.get(i).getCohesionValue() + (sentences.get(i).getSimilarityToTitle() / 2) + sentences.get(i).getMeanWordFrequency());
+
+            matrix.setW(5, i, sentences.get(i).getTotalScore() / 5);
 
         }
         try {
-            matrix = graph.nonlin(new SigmoidUnit(),matrix);
+            Graph.normalize(matrix);
             System.out.println(matrix.toString());
-
-            // Multiply a matrix by a filter
-            /*StringBuilder returnString = new StringBuilder();
-            matrix = graph.mul(filter,matrix);
-            System.out.println(matrix.toString());
-            // Create an array to hold indexes of selected sentences
-            int [] index = new int[matrix.w.length*COMPRESSION_RATE/100];
-            returnString.append("<br />Sentences in summary with AI: ").append(index.length+2).append("<hr />");
-            returnString.append(sentences.get(0).getText()).append("<br/>");
-
-            // find MAX in the product of matrices
-            for (int j = 0;j<index.length;j++){
-                int max = 0;
-                for (int i =1;i<matrix.w.length-1;i++) {
-                    if (matrix.w[i]>max){
-                        max = i;
-                        // Clear the value, so the sentence wouldn't be repeated
-                        matrix.w[i] = 0;
-                    }
-                }
-                if (max!=0) {
-                    index[j] = max;
-                }
-            }
-            // Sort the selected values, so it would follow the text
-            Arrays.sort(index);
-            for (int i :index){
-                System.out.print(i+"\t\t");
-                // Add it to the string to return
-                returnString.append(sentences.get(i).getText()).append("<br/>");
-            }
-            System.out.println();
-            // add the last sentence
-            returnString.append(sentences.get(sentences.size()-1).getText()).append("<br/>");
-            returnString.append("<hr />");
-            // insert the summary as one sentence.
-            finalSentences.add(new Sentence(returnString.toString()));*/
-
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //Always add first and last sentences of the text
@@ -528,7 +490,7 @@ public class Summarizer {
         finalSentences.add(sentences.get(sentences.size() - 1));
 
         //Sort them by total score in descending order
-       Collections.sort(sentences, new Comparator<Sentence>() {
+        sentences.sort(new Comparator<Sentence>() {
             @Override
             public int compare(Sentence o1, Sentence o2) {
                 if (o2.getTotalScore() > o1.getTotalScore()) {
@@ -565,7 +527,7 @@ public class Summarizer {
                     if (!finalSentences.contains(sentences.get(i)) && !sentences.get(i).getHasProperName() && !sentences.get(i).getHasAnaphors() && !sentences.get(i).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(i));
                         begCounter++;
-                       // System.out.println(i);
+                        // System.out.println(i);
                     }
                 }
                 i++;
@@ -580,7 +542,7 @@ public class Summarizer {
                     if (!finalSentences.contains(sentences.get(i)) && sentences.get(i).getHasAnaphors() && !sentences.get(i).getHasNonEssentialInfo()) {
                         finalSentences.add(sentences.get(i));
                         begCounter++;
-                       // System.out.println(i);
+                        // System.out.println(i);
                     }
                 }
                 i++;
@@ -596,7 +558,7 @@ public class Summarizer {
                 if (!finalSentences.contains(sentences.get(j)) && sentences.get(j).getHasProperName() && !sentences.get(j).getHasAnaphors() && !sentences.get(j).getHasNonEssentialInfo()) {
                     finalSentences.add(sentences.get(j));
                     medCounter++;
-                   // System.out.println(j);
+                    // System.out.println(j);
                 }
             }
             j++;
@@ -711,61 +673,90 @@ public class Summarizer {
     //Indexes: 0, 1, 3, 4, 9, 18, 19, 22, 23, 25, 27, 28, 30, 31, 33, 35, 37, 40
     //25 sentences
     //Indexes: 0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40
-    public void train() {
+    public void train(int[] index) {
+
+        // total matching set to 2 because first and last sentences are always added
+        int totalMatching = 2;
+        int falseSentences = 0;
+        for (int i : index) {
+            int score = checkMatchingSentences(i);
+            double[] sample = {matrix.getW(0,i),matrix.getW(1,i),matrix.getW(2,i),matrix.getW(3,i),matrix.getW(4,i),matrix.getW(5,i)};
+
+            filterTron.train(sample,score);
+            // if sentences match
+            if (score > 0) {
+                for (int l = 0; l < 6; l++) {
+                    double value = (filterTron.filter.getW(0, l) + matrix.getW(l, i)) * filterTron.LEARNING_RATE;
+                    filterTron.filter.setW(0, l, filterTron.filter.getW(0, l) + value);
+                }
+                totalMatching++;
+            } else {
+                for (int i1 = 0; i1 < 6; i1++) {
+                    filterTron.filter.setW(0, i1, filterTron.filter.getW(0, i1) - (matrix.getW(i1, i) * filterTron.LEARNING_RATE));
+
+                }
+                falseSentences++;
+            }
+            // Add it to the string to return
+
+        }
+        System.out.println("\nMatching Sentences " + totalMatching + "\nFalse sentences " + falseSentences+
+                "\nMatching rate "+totalMatching*100/(totalMatching+falseSentences));
 
         //printSeparator();
-        int[] indexes = {0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40};
-        double[] inputs = new double[6];
-
-        //for (int i = 0; i < sentences.size(); i++)
-        for (int i = 0; i < matrix.cols; i++) {
-            /*System.out.printf("Sentence %d: RL: %.2f, SKW: %.2f, CV: %.2f, ST: %.2f, MWF: %.2f, TS: %.2f%n", i,
-                    matrix.getW(0, i), matrix.getW(1, i), matrix.getW(2, i),
-                    matrix.getW(3, i), matrix.getW(4, i), matrix.getW(5, i));*/
-
-            //inputs[0] = sentences.get(i).getRelativeLength();
-            //inputs[1] = sentences.get(i).getSimilarityToKeywords();
-            //inputs[2] = sentences.get(i).getCohesionValue();
-            //inputs[3] = sentences.get(i).getSimilarityToTitle();
-            //inputs[4] = sentences.get(i).getMeanWordFrequency();
-            //inputs[5] = sentences.get(i).getTotalScore();
-            inputs[0] = matrix.getW(0, i); //relative length
-            inputs[1] = matrix.getW(1, i); //similarity to keywords
-            inputs[2] = matrix.getW(2, i); //cohesion value
-            inputs[3] = matrix.getW(3, i); //similarity to title
-            inputs[4] = matrix.getW(4, i); //mean word frequency
-            inputs[5] = matrix.getW(5, i); //total score
-            int guess = filterTron.nonRandomGuess(inputs);
-            boolean isChosen = false;
-            boolean actualChosen;
-            if (finalSentences.contains(sentences.get(i))) {
-                actualChosen = true;
-            } else {
-                actualChosen = false;
-            }
-            for (int j = 0; j < indexes.length; j++) {
-                if (indexes[j] == i) {
-                    isChosen = true;
-                    break;
-                } else {
-                    isChosen = false;
-                }
-            }
-
-            int target = computeIncreasing(isChosen, actualChosen);
-            filterTron.train(inputs, target);
-            if (guess == target) {
-
-            } else {
-                if (isChosen && !actualChosen) {
-                    matrix.setW(5, i, matrix.getW(5, i) + 1);
-                    //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() + 1);
-                } else if (!isChosen && actualChosen) {
-                    matrix.setW(5, i, matrix.getW(5, i) - 1);
-                    //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() - 1);
-                }
-            }
-        }
+//        int[] indexes = {0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40};
+//        double[] inputs = new double[6];
+//
+//        //for (int i = 0; i < sentences.size(); i++)
+//        for (int i = 0; i < matrix.cols; i++) {
+//            /*System.out.printf("Sentence %d: RL: %.2f, SKW: %.2f, CV: %.2f, ST: %.2f, MWF: %.2f, TS: %.2f%n", i,
+//                    matrix.getW(0, i), matrix.getW(1, i), matrix.getW(2, i),
+//                    matrix.getW(3, i), matrix.getW(4, i), matrix.getW(5, i));*/
+//
+//            //inputs[0] = sentences.get(i).getRelativeLength();
+//            //inputs[1] = sentences.get(i).getSimilarityToKeywords();
+//            //inputs[2] = sentences.get(i).getCohesionValue();
+//            //inputs[3] = sentences.get(i).getSimilarityToTitle();
+//            //inputs[4] = sentences.get(i).getMeanWordFrequency();
+//            //inputs[5] = sentences.get(i).getTotalScore();
+//            inputs[0] = matrix.getW(0, i); //relative length
+//            inputs[1] = matrix.getW(1, i); //similarity to keywords
+//            inputs[2] = matrix.getW(2, i); //cohesion value
+//            inputs[3] = matrix.getW(3, i); //similarity to title
+//            inputs[4] = matrix.getW(4, i); //mean word frequency
+//            inputs[5] = matrix.getW(5, i); //total score
+//            int guess = filterTron.nonRandomGuess(inputs);
+//            boolean isChosen = false;
+//            boolean actualChosen;
+//            if (finalSentences.contains(sentences.get(i))) {
+//                actualChosen = true;
+//            } else {
+//                actualChosen = false;
+//            }
+//            for (int j = 0; j < indexes.length; j++) {
+//                if (indexes[j] == i) {
+//                    isChosen = true;
+//                    break;
+//                } else {
+//                    isChosen = false;
+//                }
+//            }
+//
+//            int target = computeIncreasing(isChosen, actualChosen);
+//            filterTron.train(inputs, target);
+//            if (guess == target) {
+//
+//            } else {
+//                if (isChosen && !actualChosen) {
+//                    matrix.setW(5, i, matrix.getW(5, i) + 1);
+//                    //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() + 1);
+//                } else if (!isChosen && actualChosen) {
+//                    matrix.setW(5, i, matrix.getW(5, i) - 1);
+//                    //sentences.get(i).setTotalScore(sentences.get(i).getTotalScore() - 1);
+//                }
+//            }
+//        }
+        System.out.print(filterTron.filter);
     }
 
     private int computeIncreasing(boolean isChosen, boolean actualIsChosen) {
@@ -797,7 +788,6 @@ public class Summarizer {
                     matrix.getW(0, i), matrix.getW(1, i), matrix.getW(2, i),
                     matrix.getW(3, i), matrix.getW(4, i), matrix.getW(5, i));
         }*/
-        reorganizeAISentences();
     }
 
     private void reorganizeAISentences() {
@@ -811,9 +801,7 @@ public class Summarizer {
         Integer[] indexArray = indexes.toArray(new Integer[finalSentences.size()]);
         Integer[] helpArray = new Integer[25];
 
-        for (int i = 0; i < helpArray.length; i++) {
-            helpArray[i] = indexArray[i];
-        }
+        System.arraycopy(indexArray, 0, helpArray, 0, helpArray.length);
 
         Arrays.sort(helpArray);
         for (int i = 0; i < finalSentences.size(); i++) {
@@ -821,12 +809,71 @@ public class Summarizer {
         }
     }
 
-    public void saveFilter(){
-        try(ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream("Filter.mx"))){
+    public void saveFilter() {
+        try (ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream("Filter.mx"))) {
+            filterTron.normalize();
             fos.writeObject(filterTron.filter);
             System.out.println("Filter saved.");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void getAISentences() {
+        Graph graph = new Graph();
+        try {
+            // Multiply a matrix by a filter
+            Matrix mx = matrix.clone();
+            StringBuilder returnString = new StringBuilder();
+            filterTron.normalize();
+            mx = graph.mul(filterTron.filter, mx);
+            System.out.println(mx.toString());
+            // Create an array to hold indexes of selected sentences
+            int[] index = new int[mx.w.length * COMPRESSION_RATE / 100];
+            returnString.append("<br />Sentences in summary with AI: ").append(index.length + 2).append("<hr />");
+            returnString.append(sentences.get(0).getText()).append("<br/>");
+
+            // find MAX in the product of matrices
+            for (int j = 0; j < index.length; j++) {
+                int max = 1;
+                for (int i = 1; i < mx.w.length - 1; i++) {
+                    if (mx.w[i] > mx.w[max]) {
+                        max = i;
+                    }
+                }
+                index[j] = max;
+                // Clear the value, so the sentence wouldn't be repeated
+                mx.w[max] = 0;
+            }
+            System.out.println(mx.toString());
+            // Sort the selected values, so it would follow the text
+            Arrays.sort(index);
+
+            // training
+            for (int i=0;i<100;i++)
+            train(index);
+
+            for (int i:index){
+                returnString.append(sentences.get(i).getText()).append("<br/>");
+            }
+            returnString.append(sentences.get(sentences.size() - 1).getText()).append("<br/>");
+
+            returnString.append("<hr />");
+            // insert the summary as one sentence.
+            finalSentencesAI.add(new Sentence(returnString.toString()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int checkMatchingSentences(int chosen) {
+        int[] indexes = {0, 1, 3, 4, 9, 12, 13, 14, 18, 19, 22, 23, 25, 26, 27, 28, 30, 31, 33, 34, 35, 36, 37, 39, 40};
+        for (int index : indexes) {
+            if (chosen == index) {
+                return +1;
+            }
+        }
+        return -1;
+
     }
 }

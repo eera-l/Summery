@@ -16,18 +16,12 @@ import java.util.Random;
 public class FilterTron {
 
     public Matrix filter;
-    public final float LEARNING_RATE = 1.0f;
+    public final float LEARNING_RATE = 0.001f;
 
     public FilterTron() {
         loadFilter();
         if (filter==null){
             filter = Matrix.rand(1,6,1,new Random());
-        }
-        Graph graph = new Graph();
-        try {
-            filter = graph.nonlin(new SigmoidUnit(), filter);
-        } catch (Exception e){
-            e.printStackTrace();
         }
         System.out.println(filter.toString());
     }
@@ -77,4 +71,9 @@ public class FilterTron {
             e.printStackTrace();
         }
     }
+
+    public void normalize(){
+        Graph.normalize(filter);
+    }
+
 }

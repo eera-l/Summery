@@ -106,11 +106,13 @@ public class Algo {
         }
         text += "<hr />";
 
-        for (int i = 0; i < 8; i++)
-            summarizer.train();
+//        for (int i = 0; i < 100; i++)
+//            summarizer.train();
+
+        summarizer.getAISentences();
         summarizer.saveFilter();
 
-        summarizer.displayForBetterUnderstanding();
+        //summarizer.displayForBetterUnderstanding();
 
         text += "Summary after training: " + "<br />";
 
